@@ -1,0 +1,7 @@
+{
+  "name": "iron-component-page",
+  "private": true,
+  "dependencies": {
+    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#master"
+  }
+}

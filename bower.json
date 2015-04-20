@@ -2,6 +2,10 @@
   "name": "iron-component-page",
   "private": true,
   "dependencies": {
-    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#master"
+    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#master",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#master"
+  },
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0"
   }
 }

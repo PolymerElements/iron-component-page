@@ -7,6 +7,7 @@
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^0.8.0"
   },
   "devDependencies": {
+    "test-fixture": "PolymerElements/test-fixture#^0.8.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0",
     "web-component-tester": "*"
   }

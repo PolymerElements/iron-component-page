@@ -8,128 +8,370 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
 
 <!--
-Renders documentation describing an element's API.
-
-`iron-doc-element` renders element descriptions as extracted by
-[Hydrolysis](https://github.com/PolymerLabs/hydrolysis). You can provide them
-either via binding...
-
-    <iron-doc-page descriptor="{{elementDescriptor}}"></iron-doc-page>
-
-...or by placing the element descriptor in JSON as the text content of a
-`iron-doc-page`:
-
-    <iron-doc-page>
-      {
-        "is": "awesome-sauce",
-        "properties": [
-          {"name": "isAwesome", "type": "boolean", "desc": "Is it awesome?"},
-        ]
-      }
-    </iron-doc-page>
-
-However, be aware that due to current limitations in Polymer 0.8, _changes_ to
-the text content will not be respected, only the initial value will be loaded.
-If you wish to update the documented element, please set it via the `descriptor`
-property.
+Loads Polymer element and behavior documentation using
+[Hydrolysis](https://github.com/PolymerLabs/hydrolysis) and renders a complete
+documentation page including demos (if available).
 -->
 <dom-module id="iron-component-page">
-
   <style>
     :host {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 100vh;
-      left: 0;
-      box-sizing: border-box;
+      mixin(--layout-fit);
+      mixin(--layout);
       mixin(--layout-vertical);
-      font-family: sans-serif;
+      overflow: hidden;
     }
-    [header] {
-      padding: 0 8px;
-      border-bottom: 1px solid #bbb;
+
+    p {
+      max-width: 20em;
     }
-    [columns] {
-      mixin(--layout-horizontal);
+
+    paper-header-panel {
       mixin(--layout-flex);
     }
-    [docs] {
-      padding: 16px;
-      background-color: #eeeeee;
-      border-right: 1px solid #bbb;
-      overflow: auto;
-      mixin(--layout-flex-1);
+
+    paper-toolbar {
+      --paper-toolbar-background: #ebebeb;
+      --paper-toolbar-color: #333;
+      flex-shrink: 0;
     }
-    [demo] {
-      mixin(--layout-flex-3);
+
+    iron-doc-viewer {
+      margin: 0 auto;
     }
-    iframe {
-      border: none;
+
+    #content {
+      display: block;
+      background: #ebebeb;
+      padding: 20px;
+      mixin(--layout-fit);
+      overflow-x: none;
+      overflow-y: auto;
+    }
+
+    #links a {
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    #links a:last-child {
+      margin-right: 0;
+    }
+
+    #links a, #links iron-icon {
+      font-weight: normal;
+      color: var(--secondary-text-color);
+    }
+
+    #links iron-icon {
+      margin: -2px 5px 0 0;
+    }
+
+    #links a.iron-selected, #links a.iron-selected iron-icon {
+      color: var(--primary-text-color);
+    }
+
+    #view, #docs, #demo {
+      mixin(--layout-fit);
+    }
+
+    #demo {
+      border: 0;
+      background: transparent;
+      width: 100%;
+      height: 100%;
+      overflow-x: none;
+      overflow-y: auto;
+    }
+
+    #view > * {
+      display: none;
+    }
+
+    #view > .iron-selected {
+      display: block;
+    }
+
+    #docs { padding: 20px; }
+
+    #active {
+      font-size: 20px;
+      font-family: Roboto, Noto;
+      border: 0;
+      background: transparent;
     }
   </style>
 
   <template>
-
-    <div header>
-      <h1>{{moduleName}}</h1>
-    </div>
-
-    <div columns>
-
-      <div docs>
-        <iron-doc-viewer no-demo src="{{_docUrl}}"></iron-doc-viewer>
+    <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_analyzer}}" loading="{{_loading}}"></hydrolysis-analyzer>
+    <paper-header-panel mode="waterfall">
+      <paper-toolbar>
+        <div class="flex">
+          <!-- TODO: Replace with paper-dropdown-menu when available -->
+          <select id="active" value="{{active::change}}">
+            <template is="x-repeat" items="[[_elements]]">
+              <option value="[[item.is]]">[[item.is]]</option>
+            </template>
+          </select>
+        </div>
+        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_demoUrl]]">
+          <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
+          <a view="demo"><iron-icon icon="visibility"></iron-icon> Demo</a>
+        </iron-selector>
+      </paper-toolbar>
+      <div id="content">
+        <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
+          <div id="docs">
+            <iron-doc-viewer descriptor="{{_activeElement}}"></iron-doc-viewer>
+          </div>
+          <iframe id="demo" src="[[_demoUrl]]"></iframe>
+        </iron-selector>
       </div>
-
-      <iframe demo src="{{_demoUrl}}"></iframe>
-
-    </div>
-
+    </paper-header-panel>
   </template>
-
-  <script>
-
-    Polymer({
-
-      enableCustomStyleProperties: true,
-
-      properties: {
-
-        moduleName: {
-          observer: '_moduleNameChanged'
-        },
-
-        _demoUrl: {
-          value: 'demo'
-        }
-
-      },
-
-      ready: function() {
-        this.moduleName = this.moduleName || this._findModuleName();
-      },
-
-      _findModuleName: function() {
-        var path = location.pathname.split('/');
-        var name = path.pop() || path.pop();
-        if (name.indexOf('.html') >= 0) {
-          name = path.pop();
-        }
-        return name || '';
-      },
-
-      _moduleNameChanged: function(moduleName) {
-        document.title = moduleName;
-        this._docUrl = moduleName + '.html';
-      }
-
-    });
-
-  </script>
-
 </dom-module>
 
+<script>
+(function() {
+  // var hydrolysis = require('hydrolysis');
+
+  /**
+   * @param {string} url
+   * @return {string} `url` stripped of a file name, if one is present. This
+   *     considers URLs like "example.com/foo" to already be a base (no `.` is)
+   *     present in the final path part).
+   */
+  function _baseUrl(url) {
+    return url.match(/^(.*?)\/?([^\/]+\.[^\/]+)?$/)[1] + '/';
+  }
+
+  Polymer({
+    is: 'iron-component-page',
+    enableCustomStyleProperties: true,
+    properties: {
+      /**
+       * The URL to an import that declares (or transitively imports) the
+       * elements that you wish to see documented.
+       *
+       * If the URL is relative, it will be resolved relative to the master
+       * document.
+       *
+       * If a `src` URL is not specified, it will resolve the name of the
+       * directory containing this element, followed by `dirname.html`. For
+       * example:
+       *
+       * `awesome-sauce/index.html`:
+       *
+       *     <iron-doc-viewer></iron-doc-viewer>
+       *
+       * Would implicitly have `src="awesome-sauce.html"`.
+       */
+      src: {
+        type:     String,
+        observer: '_srcChanged',
+      },
+
+      /**
+       * The element or behavior that will be displayed on the page. Defaults
+       * to the element matching the name of the source file.
+       */
+      active: {
+        type: String,
+        observer: '_activeChanged'
+      },
+
+      /**
+       * The current view. Can be `docs` or `demo`.
+       */
+      view: {
+        type: String,
+        value: 'docs'
+      },
+
+      /**
+       * Whether _all_ dependencies should be loaded and documented.
+       *
+       * Turning this on will probably slow down the load process dramatically.
+       */
+      transitive: Boolean,
+
+      /** The Hydrolysis element descriptors being rendered. */
+      _elements: {
+        type:     Array,
+        observer: '_elementsChanged',
+      },
+
+      /**
+       * The currently displayed element.
+       *
+       * @type {!hydrolysis.ElementDescriptor}
+       */
+      _activeElement: Object,
+
+      /**
+       * The hydrolysis analyzer.
+       *
+       * @type {!hydrolysis.Analyzer}
+       */
+      _analyzer: {
+        observer: '_analyzerChanged',
+      },
+
+      /** Whether the analyzer is loading source. */
+      _loading: {
+        type:     Boolean,
+        observer: '_loadingChanged',
+      },
+
+      /** The complete URL to this component's demo. */
+      _demoUrl: {
+        type: String,
+        value: '',
+      },
+
+      /** The complete URL to this component's source. */
+      _srcUrl: String,
+
+      /** The component type that should be rendered. */
+      _activeContentType: {
+        type:  String,
+        value: 'element',
+      }
+    },
+
+    ready: function() {
+      this.moduleName = this.moduleName || this._findModuleName();
+      var elements = this._loadJson();
+      if (elements) {
+        this._elements = elements;
+        this._loading  = false;
+      } else {
+        // Make sure our change handlers trigger in all cases.
+        if (!this.src) {
+          this._srcChanged();
+        }
+      }
+    },
+
+    _findModuleName: function() {
+      var path = location.pathname.split('/');
+      var name = path.pop() || path.pop();
+      if (name.indexOf('.html') >= 0) {
+        name = path.pop();
+      }
+      return name || '';
+    },
+
+    _moduleNameChanged: function(moduleName) {
+      document.title = moduleName;
+      this._docUrl = moduleName + '.html';
+    },
+
+    /**
+     * Loads an array of hydrolysis element descriptors (as JSON) from the text
+     * content of this element, if present.
+     *
+     * @return {Array<hydrolysis.ElementDescriptor>} The descriptors, or `null`.
+     */
+    _loadJson: function() {
+      var textContent = '';
+      Array.prototype.forEach.call(Polymer.dom(this).childNodes, function(node) {
+        textContent = textContent + node.textContent;
+      });
+      textContent = textContent.trim();
+      if (textContent === '') return null;
+
+      try {
+        var json = JSON.parse(textContent);
+        if (!Array.isArray(json)) return [];
+        return json;
+      } catch(error) {
+        console.error('Failure when parsing JSON:', textContent, error);
+        throw error;
+      }
+    },
+
+    _srcChanged: function() {
+      var docUrl = this.ownerDocument.baseURI;
+      var srcUrl;
+      if (this.src) {
+        srcUrl = new URL(this.src, docUrl).toString();
+      } else {
+        var base = _baseUrl(docUrl);
+        srcUrl = new URL(base.match(/([^\/]*)\/$/)[1] + ".html", base).toString();
+      }
+
+      // Rewrite gh-pages URLs to https://rawgit.com/
+      var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);
+      if (match) {
+        srcUrl = "https://cdn.rawgit.com/" + match[1] + "/" + match[2] + "/master/" + match[3];
+        // We'd love to support demos, but 99% of the time they require external
+        // dependencies ...so nope.
+        this.noDemo = true;
+      }
+
+      this._baseUrl = _baseUrl(srcUrl);
+      this._srcUrl  = srcUrl;
+      this.$.analyzer.analyze();
+      this.async(this._updateDemoUrl);
+    },
+
+    _updateDemoUrl: function() {
+      if (this.noDemo || !this._baseUrl || !this.demoPath) {
+        this._demoUrl = ''; // Because null serializes to "null".
+      } else {
+        this._demoUrl = new URL(this.demoPath, this._baseUrl).toString();
+      }
+    },
+
+    _elementsChanged: function() {
+      if (this._elements && this._elements[0]) {
+        this.active = this._elements[0].is;
+      }
+    },
+
+    _activeChanged: function() {
+      if (this._analyzer && this._analyzer.elementsByTagName) {
+        this._activeElement = this._analyzer.elementsByTagName[this.active];
+      }
+    },
+
+    _loadingChanged: function() {
+      this.toggleClass('loaded', !this._loading);
+    },
+
+    _analyzerChanged: function() {
+      this._elements = this._analyzer ? this._analyzer.elements : [];
+    },
+
+    _showDemo: function(event) {
+      this._activeContentType = 'demo';
+    },
+
+    /**
+     * Renders this element into static HTML for offline use.
+     *
+     * This is mostly useful for debugging and one-off documentation generation.
+     * If you want to integrate doc generation into your build process, you
+     * probably want to be calling `hydrolysis.Analyzer.analyze()` directly.
+     *
+     * @return {string} The HTML for this element with all state baked in.
+     */
+    marshal: function() {
+      var jsonText = JSON.stringify(this._elements || [], null, '  ');
+      return '<' + this.is + '>\n' +
+             jsonText.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n' +
+             '</' + this.is + '>';
+    },
+
+  });
+})();
+</script>

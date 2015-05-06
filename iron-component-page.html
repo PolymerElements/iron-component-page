@@ -122,7 +122,7 @@ documentation page including demos (if available).
             </template>
           </select>
         </div>
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_demoUrl]]">
+        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_firstDemoUrl]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
           <a view="demo"><iron-icon icon="visibility"></iron-icon> Demo</a>
         </iron-selector>
@@ -132,7 +132,7 @@ documentation page including demos (if available).
           <div id="docs">
             <iron-doc-viewer descriptor="{{_activeElement}}"></iron-doc-viewer>
           </div>
-          <iframe id="demo" src="[[_demoUrl]]"></iframe>
+          <iframe id="demo" src="[[_firstDemoUrl]]"></iframe>
         </iron-selector>
       </div>
     </paper-header-panel>
@@ -215,6 +215,11 @@ documentation page including demos (if available).
        * @type {!hydrolysis.ElementDescriptor}
        */
       _activeElement: Object,
+      /**
+       * Demos for the currently selected element.
+       */
+      _demos: Array,
+      _firstDemoUrl: String,
 
       /**
        * The hydrolysis analyzer.
@@ -341,6 +346,17 @@ documentation page including demos (if available).
     _activeChanged: function() {
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this._activeElement = this._analyzer.elementsByTagName[this.active];
+        this._demos = [];
+        var tags = this._activeElement.jsdoc.tags;
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].tag === 'demo') {
+            this._demos.push({
+              name: tags[i].body,
+              path: tags[i].name
+            });
+          }
+        }
+        this._firstDemoUrl = this._demos.length ? this._demos[0].path : null;
       }
     },
 

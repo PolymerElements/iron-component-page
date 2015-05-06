@@ -91,45 +91,44 @@ property.
 
   </template>
 
-  <script>
 
-    Polymer({
-
-      enableCustomStyleProperties: true,
-
-      properties: {
-
-        moduleName: {
-          observer: '_moduleNameChanged'
-        },
-
-        _demoUrl: {
-          value: 'demo'
-        }
-
-      },
-
-      ready: function() {
-        this.moduleName = this.moduleName || this._findModuleName();
-      },
-
-      _findModuleName: function() {
-        var path = location.pathname.split('/');
-        var name = path.pop() || path.pop();
-        if (name.indexOf('.html') >= 0) {
-          name = path.pop();
-        }
-        return name || '';
-      },
-
-      _moduleNameChanged: function(moduleName) {
-        document.title = moduleName;
-        this._docUrl = moduleName + '.html';
-      }
-
-    });
-
-  </script>
 
 </dom-module>
+<script>
+  Polymer({
+    is: 'iron-component-page',
+
+    properties: {
+
+      moduleName: {
+        observer: '_moduleNameChanged'
+      },
+
+      _demoUrl: {
+        value: 'demo'
+      }
+
+    },
+
+    ready: function() {
+      this.moduleName = this.moduleName || this._findModuleName();
+    },
+
+    _findModuleName: function() {
+      var path = location.pathname.split('/');
+      var name = path.pop() || path.pop();
+      if (name.indexOf('.html') >= 0) {
+        name = path.pop();
+      }
+      return name || '';
+    },
+
+    _moduleNameChanged: function(moduleName) {
+      document.title = moduleName;
+      this._docUrl = moduleName + '.html';
+    }
+
+  });
+
+</script>
 

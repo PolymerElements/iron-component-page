@@ -1,6 +1,6 @@
 {
   "name": "iron-component-page",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "dependencies": {
     "polymer": "polymer/polymer#v0.9.0-rc.1",

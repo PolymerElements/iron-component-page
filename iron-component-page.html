@@ -24,9 +24,9 @@ documentation page including demos (if available).
 <dom-module id="iron-component-page">
   <style>
     :host {
-      mixin(--layout-fit);
-      mixin(--layout);
-      mixin(--layout-vertical);
+      @apply(--layout-fit);
+      @apply(--layout);
+      @apply(--layout-vertical);
       overflow: hidden;
     }
 
@@ -35,7 +35,7 @@ documentation page including demos (if available).
     }
 
     paper-header-panel {
-      mixin(--layout-flex);
+      @apply(--layout-flex);
     }
 
     paper-toolbar {
@@ -52,7 +52,7 @@ documentation page including demos (if available).
       display: block;
       background: #ebebeb;
       padding: 20px;
-      mixin(--layout-fit);
+      @apply(--layout-fit);
       overflow-x: none;
       overflow-y: auto;
     }
@@ -80,7 +80,7 @@ documentation page including demos (if available).
     }
 
     #view, #docs, #demo {
-      mixin(--layout-fit);
+      @apply(--layout-fit);
     }
 
     #demo {
@@ -117,7 +117,7 @@ documentation page including demos (if available).
         <div class="flex">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
           <select id="active" value="{{active::change}}">
-            <template is="x-repeat" items="[[_elements]]">
+            <template is="dom-repeat" items="[[_elements]]">
               <option value="[[item.is]]">[[item.is]]</option>
             </template>
           </select>

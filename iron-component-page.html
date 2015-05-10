@@ -16,10 +16,11 @@ Renders documentation and a demo page for an element.
 
     <iron-component-page></iron-component-page>
 
-By default, `iron-component-page` will set the documentation collection
-name based on the URL. To specify a colleciton name, use `moduleName`:
+By default, `iron-component-page` set the module name based on the URL the
+component is being served from. To specify an HTML import with a collection of
+elements, set the `moduleName` property:
 
-    <iron-component-page module-name="My Doc Set"></iron-component-page>
+    <iron-component-page module-name="your-elements"></iron-component-page>
 
 -->
 <dom-module id="iron-component-page">
@@ -87,8 +88,8 @@ name based on the URL. To specify a colleciton name, use `moduleName`:
 
       /**
        * The name of the documentation set. By default, `iron-component-page`
-       * will set an appropriate name based on the URL the component is being
-       * served from.
+       * will set an appropriate module name based on the URL the component is
+       * being served from.
        */
       moduleName: {
         type: String,

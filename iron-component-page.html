@@ -36,6 +36,7 @@ documentation page including demos (if available).
 
     paper-header-panel {
       @apply(--layout-flex);
+      background: #ebebeb;
     }
 
     paper-toolbar {
@@ -52,9 +53,6 @@ documentation page including demos (if available).
       display: block;
       background: #ebebeb;
       padding: 20px;
-      @apply(--layout-fit);
-      overflow-x: none;
-      overflow-y: auto;
     }
 
     #links a {
@@ -118,6 +116,9 @@ documentation page including demos (if available).
           <!-- TODO: Replace with paper-dropdown-menu when available -->
           <select id="active" value="{{active::change}}">
             <template is="dom-repeat" items="[[_elements]]">
+              <option value="[[item.is]]">[[item.is]]</option>
+            </template>
+            <template is="dom-repeat" items="[[_behaviors]]">
               <option value="[[item.is]]">[[item.is]]</option>
             </template>
           </select>
@@ -206,7 +207,13 @@ documentation page including demos (if available).
       /** The Hydrolysis element descriptors being rendered. */
       _elements: {
         type:     Array,
-        observer: '_elementsChanged',
+        observer: '_descriptorsChanged',
+      },
+
+      /** The Hydrolysis behavior descriptors being rendered. */
+      _behaviors: {
+        type:     Array,
+        observer: '_descriptorsChanged',
       },
 
       /**
@@ -342,9 +349,11 @@ documentation page including demos (if available).
       }
     },
 
-    _elementsChanged: function() {
+    _descriptorsChanged: function() {
       if (this._elements && this._elements[0]) {
         this.active = this._elements[0].is;
+      } else if (this._behaviors && this._behaviors[0]) {
+        this.active = this._behaviors[0].is;
       }
     },
 
@@ -374,6 +383,7 @@ documentation page including demos (if available).
 
     _analyzerChanged: function() {
       this._elements = this._analyzer ? this._analyzer.elements : [];
+      this._behaviors = this._analyzer ? this._analyzer.behaviors : [];
     },
 
     _showDemo: function(event) {

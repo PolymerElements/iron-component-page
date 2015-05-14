@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
-<link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
+<link rel="import" href="../argon-doc-viewer/argon-doc-viewer.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
@@ -21,7 +21,7 @@ Loads Polymer element and behavior documentation using
 [Hydrolysis](https://github.com/PolymerLabs/hydrolysis) and renders a complete
 documentation page including demos (if available).
 -->
-<dom-module id="iron-component-page">
+<dom-module id="argon-component-page">
   <style>
     :host {
       @apply(--layout-fit);
@@ -45,7 +45,7 @@ documentation page including demos (if available).
       flex-shrink: 0;
     }
 
-    iron-doc-viewer {
+    argon-doc-viewer {
       margin: 0 auto;
     }
 
@@ -136,7 +136,7 @@ documentation page including demos (if available).
       <div id="content">
         <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
           <div id="docs">
-            <iron-doc-viewer descriptor="{{_activeElement}}"></iron-doc-viewer>
+            <argon-doc-viewer descriptor="{{_activeElement}}"></argon-doc-viewer>
           </div>
           <iframe id="demo" src="[[_frameSrc(_firstDemoUrl)]]"></iframe>
         </iron-selector>
@@ -160,7 +160,7 @@ documentation page including demos (if available).
   }
 
   Polymer({
-    is: 'iron-component-page',
+    is: 'argon-component-page',
     enableCustomStyleProperties: true,
     properties: {
       /**
@@ -176,7 +176,7 @@ documentation page including demos (if available).
        *
        * `awesome-sauce/index.html`:
        *
-       *     <iron-doc-viewer></iron-doc-viewer>
+       *     <argon-doc-viewer></argon-doc-viewer>
        *
        * Would implicitly have `src="awesome-sauce.html"`.
        */

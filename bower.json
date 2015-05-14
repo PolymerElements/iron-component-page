@@ -1,10 +1,10 @@
 {
-  "name": "iron-component-page",
+  "name": "argon-component-page",
   "version": "0.9.1",
   "private": true,
   "dependencies": {
     "polymer": "polymer/polymer#^0.9.0-rc.1",
-    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^0.9.0",
+    "argon-doc-viewer": "PolymerElements/iron-doc-viewer#^0.9.0",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^0.9.0",
     "paper-toolbar": "PolymerElements/paper-toolbar#^0.9.0",
     "hydrolysis": "Polymer/hydrolysis#^1.5",

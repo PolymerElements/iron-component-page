@@ -1,2 +1,2 @@
-iron-component-page
+argon-component-page
 ===================

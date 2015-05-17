@@ -136,7 +136,7 @@ documentation page including demos (if available).
       <div id="content">
         <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
           <div id="docs">
-            <iron-doc-viewer descriptor="{{_activeElement}}"></iron-doc-viewer>
+            <iron-doc-viewer descriptor="{{_activeDescriptor}}"></iron-doc-viewer>
           </div>
           <iframe id="demo" src="[[_frameSrc(_firstDemoUrl)]]"></iframe>
         </iron-selector>
@@ -226,7 +226,7 @@ documentation page including demos (if available).
        *
        * @type {!hydrolysis.ElementDescriptor}
        */
-      _activeElement: Object,
+      _activeDescriptor: Object,
       /**
        * Demos for the currently selected element.
        */
@@ -356,14 +356,26 @@ documentation page including demos (if available).
         this.active = this._behaviors[0].is;
       }
     },
+    
+    _findDescriptor: function(name) {
+      var descriptor = this._analyzer.elementsByTagName[name];
+      if (descriptor) return descriptor;
+      
+      for (var i = 0; i < this._analyzer.behaviors.length; i++) {
+        if (this._analyzer.behaviors[i].is === name) {
+          return this._analyzer.behaviors[i];
+        }
+      }
+      return null;
+    },
 
     _activeChanged: function() {
       if (this._analyzer && this._analyzer.elementsByTagName) {
-        this._activeElement = this._analyzer.elementsByTagName[this.active];
+        this._activeDescriptor = this._findDescriptor(this.active);
         this._demos = [];
         this.view = "docs";
-        if (this._activeElement.jsdoc && this._activeElement.jsdoc.tags) {
-          var tags = this._activeElement.jsdoc.tags;
+        if (this._activeDescriptor.jsdoc && this._activeDescriptor.jsdoc.tags) {
+          var tags = this._activeDescriptor.jsdoc.tags;
           for (var i = 0; i < tags.length; i++) {
             if (tags[i].tag === 'demo') {
               this._demos.push({

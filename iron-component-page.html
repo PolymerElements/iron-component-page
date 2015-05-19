@@ -55,25 +55,25 @@ documentation page including demos (if available).
       padding: 20px;
     }
 
-    #links a {
+    paper-toolbar a {
       margin: 0 10px;
       cursor: pointer;
     }
 
-    #links a:last-child {
+    paper-toolbar a:last-child {
       margin-right: 0;
     }
 
-    #links a, #links iron-icon {
+    paper-toolbar a, paper-toolbar a iron-icon {
       font-weight: normal;
       color: var(--secondary-text-color);
     }
 
-    #links iron-icon {
+    paper-toolbar iron-icon {
       margin: -2px 5px 0 0;
     }
 
-    #links a.iron-selected, #links a.iron-selected iron-icon {
+    paper-toolbar a:hover, paper-toolbar a:hover iron-icon, paper-toolbar a.iron-selected, paper-toolbar a.iron-selected iron-icon {
       color: var(--primary-text-color);
     }
 
@@ -107,9 +107,23 @@ documentation page including demos (if available).
       background: transparent;
     }
 
-    #links a {
+    paper-toolbar a {
       font-size: 14px;
       text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    #cart-icon {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    [catalog-only] {
+      display: none;
+    }
+
+    :host([_catalog]) [catalog-only] {
+      display: block;
     }
   </style>
 
@@ -128,10 +142,12 @@ documentation page including demos (if available).
             </template>
           </select>
         </div>
+        <div><a on-tap="_cartAdd" catalog-only><iron-icon icon="add"></iron-icon> Add to Cart</a></div>
         <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_firstDemoUrl]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
           <a view="demo"><iron-icon icon="visibility"></iron-icon> Demo</a>
         </iron-selector>
+        <iron-icon id="cart-icon" icon="shopping-cart" on-tap="_cartOpen" catalog-only></iron-icon>
       </paper-toolbar>
       <div id="content">
         <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
@@ -356,11 +372,11 @@ documentation page including demos (if available).
         this.active = this._behaviors[0].is;
       }
     },
-    
+
     _findDescriptor: function(name) {
       var descriptor = this._analyzer.elementsByTagName[name];
       if (descriptor) return descriptor;
-      
+
       for (var i = 0; i < this._analyzer.behaviors.length; i++) {
         if (this._analyzer.behaviors[i].is === name) {
           return this._analyzer.behaviors[i];
@@ -417,6 +433,13 @@ documentation page including demos (if available).
              jsonText.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n' +
              '</' + this.is + '>';
     },
+
+    _cartOpen: function() {
+      this.fire('cart-open');
+    },
+    _cartAdd: function() {
+      this.fire('cart-add', this.active);
+    }
   });
 })();
 </script>

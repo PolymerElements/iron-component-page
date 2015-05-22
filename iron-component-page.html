@@ -28,6 +28,7 @@ documentation page including demos (if available).
       @apply(--layout);
       @apply(--layout-vertical);
       overflow: hidden;
+      background: var(--paper-grey-50);
     }
 
     p {
@@ -36,12 +37,12 @@ documentation page including demos (if available).
 
     paper-header-panel {
       @apply(--layout-flex);
-      background: #ebebeb;
+      background: var(--paper-grey-50);
     }
 
     paper-toolbar {
-      --paper-toolbar-background: #ebebeb;
-      --paper-toolbar-color: #333;
+      --paper-toolbar-background: var(--paper-grey-50);
+      --paper-toolbar-color: var(--paper-grey-800);
       flex-shrink: 0;
     }
 
@@ -49,9 +50,18 @@ documentation page including demos (if available).
       margin: 0 auto;
     }
 
+    :host > paper-header-panel {
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    :host(.loaded) > paper-header-panel {
+      opacity: 1.0;
+    }
+
     #content {
       display: block;
-      background: #ebebeb;
+      background: var(--paper-grey-50);
       padding: 20px;
     }
 
@@ -66,7 +76,7 @@ documentation page including demos (if available).
 
     paper-toolbar a, paper-toolbar a iron-icon {
       font-weight: normal;
-      color: var(--secondary-text-color);
+      color: var(--paper-grey-500);
     }
 
     paper-toolbar iron-icon {
@@ -74,7 +84,7 @@ documentation page including demos (if available).
     }
 
     paper-toolbar a:hover, paper-toolbar a:hover iron-icon, paper-toolbar a.iron-selected, paper-toolbar a.iron-selected iron-icon {
-      color: var(--primary-text-color);
+      color: var(--paper-grey-800);
     }
 
     #view, #docs, #demo {

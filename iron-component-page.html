@@ -292,7 +292,6 @@ documentation page including demos (if available).
         var base = _baseUrl(this.base);
         srcUrl = new URL(base.match(/([^\/]*)\/$/)[1] + ".html", base).toString();
       }
-      console.log(srcUrl);
 
       // Rewrite gh-pages URLs to https://rawgit.com/
       var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);

@@ -115,6 +115,18 @@ documentation page including demos (if available).
       },
 
       /**
+       * The relative root for determining paths to demos and default source
+       * detection.
+       */
+      base: {
+        type: String,
+        observer: '_srcChanged',
+        value: function() {
+          return this.ownerDocument.baseURI;
+        }
+      },
+
+      /**
        * The element or behavior that will be displayed on the page. Defaults
        * to the element matching the name of the source file.
        */
@@ -144,15 +156,27 @@ documentation page including demos (if available).
       docElements: {
         type:     Array,
         observer: '_descriptorsChanged',
-        notify: true
+        notify: true,
+        readOnly: true
       },
 
       /** The Hydrolysis behavior descriptors that have been loaded. */
       docBehaviors: {
         type:     Array,
         observer: '_descriptorsChanged',
-        notify: true
+        notify: true,
+        readOnly: true
       },
+
+      /**
+       * Demos for the currently selected element.
+       */
+      docDemos: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      },
+      _firstDemoUrl: String,
 
       /**
        * The currently displayed element.
@@ -160,11 +184,6 @@ documentation page including demos (if available).
        * @type {!hydrolysis.ElementDescriptor}
        */
       _activeDescriptor: Object,
-      /**
-       * Demos for the currently selected element.
-       */
-      _demos: Array,
-      _firstDemoUrl: String,
 
       /**
        * Toggle flag to be used when this element is being displayed in the
@@ -220,12 +239,6 @@ documentation page including demos (if available).
 
       /** The complete URL to this component's source. */
       _srcUrl: String,
-
-      /** The component type that should be rendered. */
-      _activeContentType: {
-        type:  String,
-        value: 'element',
-      }
     },
 
     ready: function() {
@@ -266,7 +279,6 @@ documentation page including demos (if available).
     },
 
     _srcChanged: function() {
-      var docUrl = this.ownerDocument.baseURI;
       var srcUrl;
       if (this.docSrc) {
         if (!this._ajaxLoading) {
@@ -275,9 +287,9 @@ documentation page including demos (if available).
         }
         return;
       } else if (this.src) {
-        srcUrl = new URL(this.src, docUrl).toString();
+        srcUrl = new URL(this.src, this.base).toString();
       } else {
-        var base = _baseUrl(docUrl);
+        var base = _baseUrl(this.base);
         srcUrl = new URL(base.match(/([^\/]*)\/$/)[1] + ".html", base).toString();
       }
       console.log(srcUrl);
@@ -297,7 +309,7 @@ documentation page including demos (if available).
     },
 
     _frameSrc: function(src) {
-      if (src) { return src; }
+      if (src) { return new URL(src, this.base).toString(); }
       else { return "about:blank"; }
     },
 
@@ -328,24 +340,21 @@ documentation page including demos (if available).
     _activeChanged: function() {
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this._activeDescriptor = this._findDescriptor(this.active);
-        this._demos = this._activeDescriptor.demos || [];
-        this.view = "docs";
-        this._firstDemoUrl = this._demos.length ? this._demos[0].path : null;
+        this._setDocDemos(this._activeDescriptor.demos || []);
+        this._firstDemoUrl = this.docDemos.length ? this.docDemos[0].path : null;
       }
     },
 
     _loadingChanged: function() {
-      console.log('_loadingChanged', this._loading);
       this.toggleClass('loaded', !this._loading);
     },
     _detectLoading: function() {
-      console.log('_detectLoading', this._loading);
       this._loading = this.docSrc ? this._ajaxLoading : this._hydroLoading;
     },
 
     _analyzerChanged: function() {
-      this.docElements = this._analyzer ? this._analyzer.elements : [];
-      this.docBehaviors = this._analyzer ? this._analyzer.behaviors : [];
+      this._setDocElements(this._analyzer ? this._analyzer.elements : []);
+      this._setDocBehaviors(this._analyzer ? this._analyzer.behaviors : []);
     },
     _detectAnalyzer: function() {
       this._analyzer = this.docSrc ? this._ajaxDesc : this._hydroDesc;
@@ -353,10 +362,6 @@ documentation page including demos (if available).
 
     _handleAjaxResponse: function() {
       this._ajaxLoading = false;
-    },
-
-    _showDemo: function(event) {
-      this._activeContentType = 'demo';
     },
 
     /**

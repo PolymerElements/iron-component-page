@@ -305,7 +305,7 @@ documentation page including demos (if available).
 
       this._baseUrl = _baseUrl(srcUrl);
       this._srcUrl  = srcUrl;
-      this.$.analyzer.analyze();
+      if (!this._hydroLoading) this.$.analyzer.analyze();
     },
 
     _frameSrc: function(src) {
@@ -316,6 +316,7 @@ documentation page including demos (if available).
     _descriptorsChanged: function() {
       if (this._findDescriptor(this.active)) {
         this._activeChanged();
+        return;
       }
 
       if (this.docElements && this.docElements[0]) {
@@ -338,6 +339,7 @@ documentation page including demos (if available).
     },
 
     _activeChanged: function() {
+      this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this._activeDescriptor = this._findDescriptor(this.active);
         this._setDocDemos(this._activeDescriptor.demos || []);

@@ -52,7 +52,8 @@ documentation page including demos (if available).
             <div id="catalog-heading" catalog-only>
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
             </div>
-            <iron-doc-viewer descriptor="{{_activeDescriptor}}"></iron-doc-viewer>
+            <iron-doc-viewer descriptor="{{_activeDescriptor}}"
+              on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
             <div id="nodocs" hidden$="[[_activeDescriptor]]" class="layout fit horizontal center-center">
               No documentation found.
             </div>
@@ -153,7 +154,10 @@ documentation page including demos (if available).
        *
        * Turning this on will probably slow down the load process dramatically.
        */
-      transitive: Boolean,
+      transitive: {
+        type: Boolean,
+        value: false
+      },
 
       /** The Hydrolysis element descriptors that have been loaded. */
       docElements: {
@@ -344,6 +348,9 @@ documentation page including demos (if available).
       return null;
     },
 
+    _setActiveDescriptor: function() {
+    },
+
     _activeChanged: function() {
       this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
@@ -372,6 +379,16 @@ documentation page including demos (if available).
       this._ajaxLoading = false;
       this._ajaxLastUrl = req.url;
       this._ajaxDesc = req.response;
+    },
+
+    _handleComponentSelectedEvent: function(ev) {
+      var descriptor = this._findDescriptor(ev.detail);
+      if (!descriptor) {
+        console.warn("Could not navigate to ", ev.detail);
+      }
+      else {
+        this.active = ev.detail;
+      }
     },
 
     /**

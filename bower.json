@@ -1,13 +1,13 @@
 {
   "name": "iron-component-page",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "private": true,
   "dependencies": {
     "polymer": "polymer/polymer#^0.9.0",
     "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^0.9.0",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^0.9.0",
     "paper-toolbar": "PolymerElements/paper-toolbar#^0.9.0",
-    "hydrolysis": "Polymer/hydrolysis#^1.6",
+    "hydrolysis": "Polymer/hydrolysis#^1.10",
     "paper-header-panel": "PolymerElements/paper-header-panel#^0.9.0",
     "iron-icons": "PolymerElements/iron-icons#^0.9.0",
     "iron-selector": "PolymerElements/iron-selector#^0.9.0"

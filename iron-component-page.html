@@ -26,7 +26,7 @@ documentation page including demos (if available).
   <link rel="import" type="css" href="iron-component-page.css">
   <template>
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
-    <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" last-response="{{_ajaxDesc}}" on-response="_handleAjaxResponse"></iron-ajax>
+    <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse"></iron-ajax>
 
     <paper-header-panel mode="waterfall">
       <paper-toolbar catalog-hidden>
@@ -53,6 +53,9 @@ documentation page including demos (if available).
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
             </div>
             <iron-doc-viewer descriptor="{{_activeDescriptor}}"></iron-doc-viewer>
+            <div id="nodocs" hidden$="[[_activeDescriptor]]" class="layout fit horizontal center-center">
+              No documentation found.
+            </div>
           </div>
           <iframe id="demo" src="[[_frameSrc(_firstDemoUrl)]]"></iframe>
         </iron-selector>
@@ -281,10 +284,13 @@ documentation page including demos (if available).
     _srcChanged: function() {
       var srcUrl;
       if (this.docSrc) {
-        if (!this._ajaxLoading) {
+        if (!this.$.ajax.lastRequest || (this.docSrc !== this.$.ajax.lastRequest.url && this.docSrc !== this._lastDocSrc)) {
           this._ajaxLoading = true;
+          this._ajaxDesc = null;
+          this._activeDescriptor = null;
           this.$.ajax.generateRequest();
         }
+        this._lastDocSrc = this.docSrc;
         return;
       } else if (this.src) {
         srcUrl = new URL(this.src, this.base).toString();
@@ -297,9 +303,6 @@ documentation page including demos (if available).
       var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);
       if (match) {
         srcUrl = "https://cdn.rawgit.com/" + match[1] + "/" + match[2] + "/master/" + match[3];
-        // We'd love to support demos, but 99% of the time they require external
-        // dependencies ...so nope.
-        this.noDemo = true;
       }
 
       this._baseUrl = _baseUrl(srcUrl);
@@ -322,10 +325,14 @@ documentation page including demos (if available).
         this.active = this.docElements[0].is;
       } else if (this.docBehaviors && this.docBehaviors[0]) {
         this.active = this.docBehaviors[0].is;
+      } else {
+        this.active = null;
       }
     },
 
     _findDescriptor: function(name) {
+      if (!this._analyzer) return null;
+
       var descriptor = this._analyzer.elementsByTagName[name];
       if (descriptor) return descriptor;
 
@@ -341,7 +348,7 @@ documentation page including demos (if available).
       this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this._activeDescriptor = this._findDescriptor(this.active);
-        this._setDocDemos(this._activeDescriptor.demos || []);
+        this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
         this._firstDemoUrl = this.docDemos.length ? this.docDemos[0].path : null;
       }
     },
@@ -361,8 +368,10 @@ documentation page including demos (if available).
       this._analyzer = this.docSrc ? this._ajaxDesc : this._hydroDesc;
     },
 
-    _handleAjaxResponse: function() {
+    _handleAjaxResponse: function(e, req) {
       this._ajaxLoading = false;
+      this._ajaxLastUrl = req.url;
+      this._ajaxDesc = req.response;
     },
 
     /**

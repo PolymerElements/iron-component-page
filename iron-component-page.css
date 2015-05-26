@@ -63,6 +63,13 @@ paper-toolbar a:hover, paper-toolbar a:hover iron-icon, paper-toolbar a.iron-sel
   @apply(--layout-fit);
 }
 
+#nodocs {
+  background: var(--paper-grey-50);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--paper-grey-400);
+}
+
 #demo {
   border: 0;
   background: transparent;

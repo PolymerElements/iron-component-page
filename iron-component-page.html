@@ -357,7 +357,7 @@ documentation page including demos (if available).
         this.$.headerPanel.scroller.scrollTop = 0;
         this._activeDescriptor = this._findDescriptor(this.active);
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
-        this._firstDemoUrl = this.docDemos.length ? this.docDemos[0].path : null;
+        this._firstDemoUrl = this.docDemos && this.docDemos.length ? this.docDemos[0].path : null;
       }
     },
 

@@ -28,7 +28,7 @@ documentation page including demos (if available).
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse"></iron-ajax>
 
-    <paper-header-panel mode="waterfall">
+    <paper-header-panel id="headerPanel" mode="waterfall">
       <paper-toolbar catalog-hidden>
         <div class="flex">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
@@ -354,6 +354,7 @@ documentation page including demos (if available).
     _activeChanged: function() {
       this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
+        this.$.headerPanel.scroller.scrollTop = 0;
         this._activeDescriptor = this._findDescriptor(this.active);
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
         this._firstDemoUrl = this.docDemos.length ? this.docDemos[0].path : null;

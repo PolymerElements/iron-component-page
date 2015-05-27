@@ -10,11 +10,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
 
 <!--
 Loads Polymer element and behavior documentation using
@@ -22,137 +23,40 @@ Loads Polymer element and behavior documentation using
 documentation page including demos (if available).
 -->
 <dom-module id="iron-component-page">
-  <style>
-    :host {
-      @apply(--layout-fit);
-      @apply(--layout);
-      @apply(--layout-vertical);
-      overflow: hidden;
-    }
-
-    p {
-      max-width: 20em;
-    }
-
-    paper-header-panel {
-      @apply(--layout-flex);
-      background: #ebebeb;
-    }
-
-    paper-toolbar {
-      --paper-toolbar-background: #ebebeb;
-      --paper-toolbar-color: #333;
-      flex-shrink: 0;
-    }
-
-    iron-doc-viewer {
-      margin: 0 auto;
-    }
-
-    #content {
-      display: block;
-      background: #ebebeb;
-      padding: 20px;
-    }
-
-    paper-toolbar a {
-      margin: 0 10px;
-      cursor: pointer;
-    }
-
-    paper-toolbar a:last-child {
-      margin-right: 0;
-    }
-
-    paper-toolbar a, paper-toolbar a iron-icon {
-      font-weight: normal;
-      color: var(--secondary-text-color);
-    }
-
-    paper-toolbar iron-icon {
-      margin: -2px 5px 0 0;
-    }
-
-    paper-toolbar a:hover, paper-toolbar a:hover iron-icon, paper-toolbar a.iron-selected, paper-toolbar a.iron-selected iron-icon {
-      color: var(--primary-text-color);
-    }
-
-    #view, #docs, #demo {
-      @apply(--layout-fit);
-    }
-
-    #demo {
-      border: 0;
-      background: transparent;
-      width: 100%;
-      height: 100%;
-      overflow-x: none;
-      overflow-y: auto;
-    }
-
-    #view > * {
-      display: none;
-    }
-
-    #view > .iron-selected {
-      display: block;
-    }
-
-    #docs { padding: 20px; }
-
-    #active {
-      font-size: 20px;
-      font-family: Roboto, Noto;
-      border: 0;
-      background: transparent;
-    }
-
-    paper-toolbar a {
-      font-size: 14px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    #cart-icon {
-      margin-left: 10px;
-      cursor: pointer;
-    }
-
-    [catalog-only] {
-      display: none;
-    }
-
-    :host([_catalog]) [catalog-only] {
-      display: block;
-    }
-  </style>
-
+  <link rel="import" type="css" href="iron-component-page.css">
   <template>
-    <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_analyzer}}" loading="{{_loading}}"></hydrolysis-analyzer>
-    <paper-header-panel mode="waterfall">
-      <paper-toolbar>
+    <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
+    <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse"></iron-ajax>
+
+    <paper-header-panel id="headerPanel" mode="waterfall">
+      <paper-toolbar catalog-hidden>
         <div class="flex">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
           <select id="active" value="{{active::change}}">
-            <template is="dom-repeat" items="[[_elements]]">
+            <template is="dom-repeat" items="[[docElements]]">
               <option value="[[item.is]]">[[item.is]]</option>
             </template>
-            <template is="dom-repeat" items="[[_behaviors]]">
+            <template is="dom-repeat" items="[[docBehaviors]]">
               <option value="[[item.is]]">[[item.is]]</option>
             </template>
           </select>
         </div>
-        <div><a on-tap="_cartAdd" catalog-only><iron-icon icon="add"></iron-icon> Add to Cart</a></div>
         <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_firstDemoUrl]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
           <a view="demo"><iron-icon icon="visibility"></iron-icon> Demo</a>
         </iron-selector>
-        <iron-icon id="cart-icon" icon="shopping-cart" on-tap="_cartOpen" catalog-only></iron-icon>
       </paper-toolbar>
       <div id="content">
         <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
           <div id="docs">
-            <iron-doc-viewer descriptor="{{_activeDescriptor}}"></iron-doc-viewer>
+            <div id="catalog-heading" catalog-only>
+              <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
+            </div>
+            <iron-doc-viewer descriptor="{{_activeDescriptor}}"
+              on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
+            <div id="nodocs" hidden$="[[_activeDescriptor]]" class="layout fit horizontal center-center">
+              No documentation found.
+            </div>
           </div>
           <iframe id="demo" src="[[_frameSrc(_firstDemoUrl)]]"></iframe>
         </iron-selector>
@@ -202,12 +106,38 @@ documentation page including demos (if available).
       },
 
       /**
+       * The URL to a precompiled JSON descriptor. If you have precompiled
+       * and stored a documentation set using Hydrolysis, you can load the
+       * analyzer directly via AJAX by specifying this attribute.
+       *
+       * If a `doc-src` is not specified, it is ignored and the default
+       * rules according to the `src` attribute are used.
+       */
+      docSrc: {
+        type: String,
+        observer: '_srcChanged',
+      },
+
+      /**
+       * The relative root for determining paths to demos and default source
+       * detection.
+       */
+      base: {
+        type: String,
+        observer: '_srcChanged',
+        value: function() {
+          return this.ownerDocument.baseURI;
+        }
+      },
+
+      /**
        * The element or behavior that will be displayed on the page. Defaults
        * to the element matching the name of the source file.
        */
       active: {
         type: String,
-        observer: '_activeChanged'
+        observer: '_activeChanged',
+        notify: true
       },
 
       /**
@@ -215,7 +145,8 @@ documentation page including demos (if available).
        */
       view: {
         type: String,
-        value: 'docs'
+        value: 'docs',
+        notify: true
       },
 
       /**
@@ -223,19 +154,36 @@ documentation page including demos (if available).
        *
        * Turning this on will probably slow down the load process dramatically.
        */
-      transitive: Boolean,
-
-      /** The Hydrolysis element descriptors being rendered. */
-      _elements: {
-        type:     Array,
-        observer: '_descriptorsChanged',
+      transitive: {
+        type: Boolean,
+        value: false
       },
 
-      /** The Hydrolysis behavior descriptors being rendered. */
-      _behaviors: {
+      /** The Hydrolysis element descriptors that have been loaded. */
+      docElements: {
         type:     Array,
         observer: '_descriptorsChanged',
+        notify: true,
+        readOnly: true
       },
+
+      /** The Hydrolysis behavior descriptors that have been loaded. */
+      docBehaviors: {
+        type:     Array,
+        observer: '_descriptorsChanged',
+        notify: true,
+        readOnly: true
+      },
+
+      /**
+       * Demos for the currently selected element.
+       */
+      docDemos: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      },
+      _firstDemoUrl: String,
 
       /**
        * The currently displayed element.
@@ -243,11 +191,6 @@ documentation page including demos (if available).
        * @type {!hydrolysis.ElementDescriptor}
        */
       _activeDescriptor: Object,
-      /**
-       * Demos for the currently selected element.
-       */
-      _demos: Array,
-      _firstDemoUrl: String,
 
       /**
        * Toggle flag to be used when this element is being displayed in the
@@ -258,6 +201,10 @@ documentation page including demos (if available).
         value: false,
         reflectToAttribute: true
       },
+      /**
+       * An optional version string.
+       */
+      version: String,
 
       /**
        * The hydrolysis analyzer.
@@ -265,13 +212,30 @@ documentation page including demos (if available).
        * @type {!hydrolysis.Analyzer}
        */
       _analyzer: {
+        type: Object,
         observer: '_analyzerChanged',
+      },
+      _hydroDesc: {
+        type: Object,
+        observer: '_detectAnalyzer'
+      },
+      _ajaxDesc: {
+        type: Object,
+        observer: '_detectAnalyzer'
       },
 
       /** Whether the analyzer is loading source. */
       _loading: {
         type:     Boolean,
         observer: '_loadingChanged',
+      },
+      _hydroLoading: {
+        type: Boolean,
+        observer: '_detectLoading'
+      },
+      _ajaxLoading: {
+        type: Boolean,
+        observer: '_detectLoading'
       },
 
       /** The complete URL to this component's demo. */
@@ -282,18 +246,12 @@ documentation page including demos (if available).
 
       /** The complete URL to this component's source. */
       _srcUrl: String,
-
-      /** The component type that should be rendered. */
-      _activeContentType: {
-        type:  String,
-        value: 'element',
-      }
     },
 
     ready: function() {
       var elements = this._loadJson();
       if (elements) {
-        this._elements = elements;
+        this.docElements = elements;
         this._loading  = false;
       } else {
         // Make sure our change handlers trigger in all cases.
@@ -328,12 +286,20 @@ documentation page including demos (if available).
     },
 
     _srcChanged: function() {
-      var docUrl = this.ownerDocument.baseURI;
       var srcUrl;
-      if (this.src) {
-        srcUrl = new URL(this.src, docUrl).toString();
+      if (this.docSrc) {
+        if (!this.$.ajax.lastRequest || (this.docSrc !== this.$.ajax.lastRequest.url && this.docSrc !== this._lastDocSrc)) {
+          this._ajaxLoading = true;
+          this._ajaxDesc = null;
+          this._activeDescriptor = null;
+          this.$.ajax.generateRequest();
+        }
+        this._lastDocSrc = this.docSrc;
+        return;
+      } else if (this.src) {
+        srcUrl = new URL(this.src, this.base).toString();
       } else {
-        var base = _baseUrl(docUrl);
+        var base = _baseUrl(this.base);
         srcUrl = new URL(base.match(/([^\/]*)\/$/)[1] + ".html", base).toString();
       }
 
@@ -341,39 +307,36 @@ documentation page including demos (if available).
       var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);
       if (match) {
         srcUrl = "https://cdn.rawgit.com/" + match[1] + "/" + match[2] + "/master/" + match[3];
-        // We'd love to support demos, but 99% of the time they require external
-        // dependencies ...so nope.
-        this.noDemo = true;
       }
 
       this._baseUrl = _baseUrl(srcUrl);
       this._srcUrl  = srcUrl;
-      this.$.analyzer.analyze();
-      this.async(this._updateDemoUrl);
+      if (!this._hydroLoading) this.$.analyzer.analyze();
     },
 
     _frameSrc: function(src) {
-      if (src) { return src; }
+      if (src) { return new URL(src, this.base).toString(); }
       else { return "about:blank"; }
     },
 
-    _updateDemoUrl: function() {
-      if (this.noDemo || !this._baseUrl || !this.demoPath) {
-        this._demoUrl = ''; // Because null serializes to "null".
-      } else {
-        this._demoUrl = new URL(this.demoPath, this._baseUrl).toString();
-      }
-    },
-
     _descriptorsChanged: function() {
-      if (this._elements && this._elements[0]) {
-        this.active = this._elements[0].is;
-      } else if (this._behaviors && this._behaviors[0]) {
-        this.active = this._behaviors[0].is;
+      if (this._findDescriptor(this.active)) {
+        this._activeChanged();
+        return;
+      }
+
+      if (this.docElements && this.docElements[0]) {
+        this.active = this.docElements[0].is;
+      } else if (this.docBehaviors && this.docBehaviors[0]) {
+        this.active = this.docBehaviors[0].is;
+      } else {
+        this.active = null;
       }
     },
 
     _findDescriptor: function(name) {
+      if (!this._analyzer) return null;
+
       var descriptor = this._analyzer.elementsByTagName[name];
       if (descriptor) return descriptor;
 
@@ -385,37 +348,48 @@ documentation page including demos (if available).
       return null;
     },
 
+    _setActiveDescriptor: function() {
+    },
+
     _activeChanged: function() {
+      this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
+        this.$.headerPanel.scroller.scrollTop = 0;
         this._activeDescriptor = this._findDescriptor(this.active);
-        this._demos = [];
-        this.view = "docs";
-        if (this._activeDescriptor.jsdoc && this._activeDescriptor.jsdoc.tags) {
-          var tags = this._activeDescriptor.jsdoc.tags;
-          for (var i = 0; i < tags.length; i++) {
-            if (tags[i].tag === 'demo') {
-              this._demos.push({
-                name: tags[i].body,
-                path: tags[i].name
-              });
-            }
-          }
-        }
-        this._firstDemoUrl = this._demos.length ? this._demos[0].path : null;
+        this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
+        this._firstDemoUrl = this.docDemos.length ? this.docDemos[0].path : null;
       }
     },
 
     _loadingChanged: function() {
       this.toggleClass('loaded', !this._loading);
     },
-
-    _analyzerChanged: function() {
-      this._elements = this._analyzer ? this._analyzer.elements : [];
-      this._behaviors = this._analyzer ? this._analyzer.behaviors : [];
+    _detectLoading: function() {
+      this._loading = this.docSrc ? this._ajaxLoading : this._hydroLoading;
     },
 
-    _showDemo: function(event) {
-      this._activeContentType = 'demo';
+    _analyzerChanged: function() {
+      this._setDocElements(this._analyzer ? this._analyzer.elements : []);
+      this._setDocBehaviors(this._analyzer ? this._analyzer.behaviors : []);
+    },
+    _detectAnalyzer: function() {
+      this._analyzer = this.docSrc ? this._ajaxDesc : this._hydroDesc;
+    },
+
+    _handleAjaxResponse: function(e, req) {
+      this._ajaxLoading = false;
+      this._ajaxLastUrl = req.url;
+      this._ajaxDesc = req.response;
+    },
+
+    _handleComponentSelectedEvent: function(ev) {
+      var descriptor = this._findDescriptor(ev.detail);
+      if (!descriptor) {
+        console.warn("Could not navigate to ", ev.detail);
+      }
+      else {
+        this.active = ev.detail;
+      }
     },
 
     /**
@@ -428,18 +402,11 @@ documentation page including demos (if available).
      * @return {string} The HTML for this element with all state baked in.
      */
     marshal: function() {
-      var jsonText = JSON.stringify(this._elements || [], null, '  ');
+      var jsonText = JSON.stringify(this.docElements || [], null, '  ');
       return '<' + this.is + '>\n' +
              jsonText.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n' +
              '</' + this.is + '>';
     },
-
-    _cartOpen: function() {
-      this.fire('cart-open');
-    },
-    _cartAdd: function() {
-      this.fire('cart-add', this.active);
-    }
   });
 })();
 </script>

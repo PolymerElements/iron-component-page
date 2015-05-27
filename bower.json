@@ -8,7 +8,7 @@
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^0.9.0",
     "paper-toolbar": "PolymerElements/paper-toolbar#^0.9.0",
     "iron-ajax": "PolymerElements/iron-ajax#^0.9.0",
-    "hydrolysis": "Polymer/hydrolysis#^1.10",
+    "hydrolysis": "Polymer/hydrolysis#^1.11",
     "paper-header-panel": "PolymerElements/paper-header-panel#^0.9.0",
     "iron-icons": "PolymerElements/iron-icons#^0.9.0",
     "iron-selector": "PolymerElements/iron-selector#^0.9.0",

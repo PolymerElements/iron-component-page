@@ -355,6 +355,7 @@ documentation page including demos (if available).
       this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this.$.headerPanel.scroller.scrollTop = 0;
+        this.view = 'docs';
         this._activeDescriptor = this._findDescriptor(this.active);
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
         this._firstDemoUrl = this.docDemos && this.docDemos.length ? this.docDemos[0].path : null;

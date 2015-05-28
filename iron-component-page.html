@@ -357,7 +357,7 @@ documentation page including demos (if available).
         this.$.headerPanel.scroller.scrollTop = 0;
         this.view = 'docs';
         this._activeDescriptor = this._findDescriptor(this.active);
-        if (this._activeDescriptor.is && !document.title) {
+        if (this._activeDescriptor && this._activeDescriptor.is && !document.title) {
           document.title = this._activeDescriptor.is + " documentation";
         }
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);

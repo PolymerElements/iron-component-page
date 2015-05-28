@@ -411,7 +411,7 @@ documentation page including demos (if available).
       return "demo:" + path;
     },
     _viewType: function(view) {
-      return view.split(":")[0];
+      return view ? view.split(":")[0] : null;
     }
   });
 })();

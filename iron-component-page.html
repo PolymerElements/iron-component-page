@@ -314,12 +314,10 @@ documentation page including demos (if available).
       if (!this._hydroLoading) this.$.analyzer.analyze();
     },
 
-    _frameSrc: function(src) {
-      // allow for view e.g. demo:demo/index.html
-      if (src && src.indexOf(":") >= 0) src = src.split(':')[1];
-
-      if (src) { return new URL(src, this.base).toString(); }
-      else { return "about:blank"; }
+    _frameSrc: function(view) {
+      if (!view || view.indexOf("demo:") !== 0) return "about:blank";
+      var src = view.split(':')[1];
+      return new URL(src, this.base).toString();
     },
 
     _descriptorsChanged: function() {

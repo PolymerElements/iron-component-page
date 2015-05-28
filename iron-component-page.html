@@ -121,10 +121,10 @@ documentation page including demos (if available).
       /**
        * The relative root for determining paths to demos and default source
        * detection.
-       * @default ownerDocument.baseURI
        */
       base: {
         type: String,
+        observer: '_srcChanged',
         value: function() {
           return this.ownerDocument.baseURI;
         }
@@ -355,6 +355,9 @@ documentation page including demos (if available).
         this.$.headerPanel.scroller.scrollTop = 0;
         this.view = 'docs';
         this._activeDescriptor = this._findDescriptor(this.active);
+        if (this._activeDescriptor && this._activeDescriptor.is && !document.title) {
+          document.title = this._activeDescriptor.is + " documentation";
+        }
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
         this._firstDemoUrl = this.docDemos && this.docDemos.length ? this.docDemos[0].path : null;
       }

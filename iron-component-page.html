@@ -41,13 +41,15 @@ documentation page including demos (if available).
             </template>
           </select>
         </div>
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_firstDemoUrl]]">
+        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="demo"><iron-icon icon="visibility"></iron-icon> Demo</a>
+          <template is="dom-repeat" items="[[docDemos]]">
+            <a view="[[_demoView(item.path)]]"><iron-icon icon="visibility"></iron-icon> <span>[[item.desc]]</span></a>
+          </template>
         </iron-selector>
       </paper-toolbar>
       <div id="content">
-        <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
+        <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
           <div id="docs">
             <div id="catalog-heading" catalog-only>
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
@@ -58,7 +60,7 @@ documentation page including demos (if available).
               No documentation found.
             </div>
           </div>
-          <iframe id="demo" src="[[_frameSrc(_firstDemoUrl)]]"></iframe>
+          <iframe id="demo" src="[[_frameSrc(view)]]"></iframe>
         </iron-selector>
       </div>
     </paper-header-panel>
@@ -315,6 +317,9 @@ documentation page including demos (if available).
     },
 
     _frameSrc: function(src) {
+      // allow for view e.g. demo:demo/index.html
+      if (src && src.indexOf(":") >= 0) src = src.split(':')[1];
+
       if (src) { return new URL(src, this.base).toString(); }
       else { return "about:blank"; }
     },
@@ -346,9 +351,6 @@ documentation page including demos (if available).
         }
       }
       return null;
-    },
-
-    _setActiveDescriptor: function() {
     },
 
     _activeChanged: function() {
@@ -408,6 +410,13 @@ documentation page including demos (if available).
              jsonText.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n' +
              '</' + this.is + '>';
     },
+
+    _demoView: function(path) {
+      return "demo:" + path;
+    },
+    _viewType: function(view) {
+      return view.split(":")[0];
+    }
   });
 })();
 </script>

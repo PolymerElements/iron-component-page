@@ -43,7 +43,7 @@ documentation page including demos (if available).
         </div>
         <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>[[docDemos.0.desc]]</span></a>
+          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
         </iron-selector>
       </paper-toolbar>
       <div id="content">

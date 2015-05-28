@@ -1,11 +1,11 @@
 {
   "name": "iron-component-page",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "license": "http://polymer.github.io/LICENSE.txt",
   "dependencies": {
-    "polymer": "polymer/polymer#^1.0.0",
-    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^1.0.0",
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^1.0.1",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.0.0",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.0",
     "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",

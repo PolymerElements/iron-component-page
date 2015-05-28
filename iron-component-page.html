@@ -41,13 +41,13 @@ documentation page including demos (if available).
             </template>
           </select>
         </div>
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!_firstDemoUrl]]">
+        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="demo"><iron-icon icon="visibility"></iron-icon> Demo</a>
+          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
         </iron-selector>
       </paper-toolbar>
       <div id="content">
-        <iron-selector id="view" selected="[[view]]" attr-for-selected="id">
+        <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
           <div id="docs">
             <div id="catalog-heading" catalog-only>
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
@@ -58,7 +58,7 @@ documentation page including demos (if available).
               No documentation found.
             </div>
           </div>
-          <iframe id="demo" src="[[_frameSrc(_firstDemoUrl)]]"></iframe>
+          <iframe id="demo" src="[[_frameSrc(view)]]"></iframe>
         </iron-selector>
       </div>
     </paper-header-panel>
@@ -314,9 +314,10 @@ documentation page including demos (if available).
       if (!this._hydroLoading) this.$.analyzer.analyze();
     },
 
-    _frameSrc: function(src) {
-      if (src) { return new URL(src, this.base).toString(); }
-      else { return "about:blank"; }
+    _frameSrc: function(view) {
+      if (!view || view.indexOf("demo:") !== 0) return "about:blank";
+      var src = view.split(':')[1];
+      return new URL(src, this.base).toString();
     },
 
     _descriptorsChanged: function() {
@@ -346,9 +347,6 @@ documentation page including demos (if available).
         }
       }
       return null;
-    },
-
-    _setActiveDescriptor: function() {
     },
 
     _activeChanged: function() {
@@ -408,6 +406,13 @@ documentation page including demos (if available).
              jsonText.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n' +
              '</' + this.is + '>';
     },
+
+    _demoView: function(path) {
+      return "demo:" + path;
+    },
+    _viewType: function(view) {
+      return view ? view.split(":")[0] : null;
+    }
   });
 })();
 </script>

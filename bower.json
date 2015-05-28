@@ -2,6 +2,7 @@
   "name": "iron-component-page",
   "version": "0.9.6",
   "private": true,
+  "license": "http://polymer.github.io/LICENSE.txt",
   "dependencies": {
     "polymer": "polymer/polymer#^0.9.0",
     "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^0.9.0",

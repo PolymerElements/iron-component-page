@@ -121,10 +121,10 @@ documentation page including demos (if available).
       /**
        * The relative root for determining paths to demos and default source
        * detection.
+       * @default ownerDocument.baseURI
        */
       base: {
         type: String,
-        observer: '_srcChanged',
         value: function() {
           return this.ownerDocument.baseURI;
         }

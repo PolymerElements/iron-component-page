@@ -364,7 +364,8 @@ documentation page including demos (if available).
                     return true;
                   }
                 });
-              } else {
+              }
+              if (!hasDemo) {
                 this.view = 'demo:' + demos[0].path;
                 hasDemo = true;
               }

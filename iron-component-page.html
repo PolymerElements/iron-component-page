@@ -353,15 +353,26 @@ documentation page including demos (if available).
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this.$.headerPanel.scroller.scrollTop = 0;
         this._activeDescriptor = this._findDescriptor(this.active);
+        var requestedDemo;
         if (this._activeDescriptor) {
-          var hasDemo;
-          if (this.view && this._activeDescriptor.demos) {
-            var demo = this.view.split(':')[1];
-            hasDemo = demo && this._activeDescriptor.demos.some(function(d) {
-              return d.path == demo;
-            });
+          var demos = this._activeDescriptor.demos;
+          if (this.view && demos && demos.length) {
+            var parts = this.view.split(':');
+            if (parts[0] == 'demo') {
+              if (parts[1]) {
+                demos.some(function(d, i) {
+                  if (d.path == parts[1]) {
+                    requestedDemo = i;
+                    return true;
+                  }
+                });
+              } else {
+                requestedDemo = 0;
+                this.view = 'demo:' + demos[0].path;
+              }
+            }
           }
-          if (!hasDemo) {
+          if (requestedDemo == undefined) {
             this.view = 'docs';
           }
           if (this._activeDescriptor.is && !document.title) {
@@ -369,7 +380,8 @@ documentation page including demos (if available).
           }
         }
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
-        this._firstDemoUrl = this.docDemos && this.docDemos.length ? this.docDemos[0].path : null;
+        this._firstDemoUrl = this.docDemos && this.docDemos.length ?
+          this.docDemos[requestedDemo || 0].path : null;
       }
     },
 

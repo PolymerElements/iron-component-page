@@ -58,7 +58,7 @@ documentation page including demos (if available).
               No documentation found.
             </div>
           </div>
-          <iframe id="demo" src="[[_frameSrc(view)]]"></iframe>
+          <iframe id="demo" src="[[_frameSrc(view, base)]]"></iframe>
         </iron-selector>
       </div>
     </paper-header-panel>
@@ -352,10 +352,21 @@ documentation page including demos (if available).
       this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this.$.headerPanel.scroller.scrollTop = 0;
-        this.view = 'docs';
         this._activeDescriptor = this._findDescriptor(this.active);
-        if (this._activeDescriptor && this._activeDescriptor.is && !document.title) {
-          document.title = this._activeDescriptor.is + " documentation";
+        if (this._activeDescriptor) {
+          var hasDemo;
+          if (this.view && this._activeDescriptor.demos) {
+            var demo = this.view.split(':')[1];
+            hasDemo = demo && this._activeDescriptor.demos.some(function(d) {
+              return d.path == demo;
+            });
+          }
+          if (!hasDemo) {
+            this.view = 'docs';
+          }
+          if (this._activeDescriptor.is && !document.title) {
+            document.title = this._activeDescriptor.is + " documentation";
+          }
         }
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
         this._firstDemoUrl = this.docDemos && this.docDemos.length ? this.docDemos[0].path : null;

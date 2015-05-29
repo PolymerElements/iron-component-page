@@ -58,7 +58,7 @@ documentation page including demos (if available).
               No documentation found.
             </div>
           </div>
-          <iframe id="demo" src="[[_frameSrc(view)]]"></iframe>
+          <iframe id="demo" src="[[_frameSrc(view, base)]]"></iframe>
         </iron-selector>
       </div>
     </paper-header-panel>
@@ -182,7 +182,6 @@ documentation page including demos (if available).
         notify: true,
         readOnly: true
       },
-      _firstDemoUrl: String,
 
       /**
        * The currently displayed element.
@@ -352,13 +351,34 @@ documentation page including demos (if available).
       this.async(function() { this.$.active.value = this.active; });
       if (this._analyzer && this._analyzer.elementsByTagName) {
         this.$.headerPanel.scroller.scrollTop = 0;
-        this.view = 'docs';
         this._activeDescriptor = this._findDescriptor(this.active);
-        if (this._activeDescriptor && this._activeDescriptor.is && !document.title) {
-          document.title = this._activeDescriptor.is + " documentation";
+        if (this._activeDescriptor) {
+          var hasDemo;
+          var demos = this._activeDescriptor.demos;
+          if (this.view && demos && demos.length) {
+            var parts = this.view.split(':');
+            if (parts[0] == 'demo') {
+              if (parts[1]) {
+                hasDemo = demos.some(function(d, i) {
+                  if (d.path == parts[1]) {
+                    return true;
+                  }
+                });
+              }
+              if (!hasDemo) {
+                this.view = 'demo:' + demos[0].path;
+                hasDemo = true;
+              }
+            }
+          }
+          if (!hasDemo == undefined) {
+            this.view = 'docs';
+          }
+          if (this._activeDescriptor.is && !document.title) {
+            document.title = this._activeDescriptor.is + " documentation";
+          }
         }
         this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
-        this._firstDemoUrl = this.docDemos && this.docDemos.length ? this.docDemos[0].path : null;
       }
     },
 

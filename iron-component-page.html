@@ -158,6 +158,14 @@ documentation page including demos (if available).
         value: false
       },
 
+      /**
+       * Whether gh-pages URLs are _not_ rewritten to rawgit URLs
+       */
+      noRewrite: {
+        type: Boolean,
+        value: false
+      },
+
       /** The Hydrolysis element descriptors that have been loaded. */
       docElements: {
         type:     Array,
@@ -302,9 +310,11 @@ documentation page including demos (if available).
       }
 
       // Rewrite gh-pages URLs to https://rawgit.com/
-      var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);
-      if (match) {
-        srcUrl = "https://cdn.rawgit.com/" + match[1] + "/" + match[2] + "/master/" + match[3];
+      if (!this.noRewrite) {
+        var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);
+        if (match) {
+          srcUrl = "https://cdn.rawgit.com/" + match[1] + "/" + match[2] + "/master/" + match[3];
+        }
       }
 
       this._baseUrl = _baseUrl(srcUrl);

@@ -15,6 +15,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-tabs/paper-tab.html">
 <link rel="import" href="../paper-styles/paper-styles.html">
 
 <!--
@@ -32,13 +34,14 @@ documentation page including demos (if available).
       <paper-toolbar catalog-hidden>
         <div class="flex">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
-          <select id="active" value="{{active::change}}">
+          <paper-tabs scrollable id="active" selected="{{active::change}}">
             <template is="dom-repeat" items="[[docElements]]">
-              <option value="[[item.is]]">[[item.is]]</option>
+              <paper-tab value="[[item.is]]">[[item.is]]</paper-tab>
             </template>
             <template is="dom-repeat" items="[[docBehaviors]]">
-              <option value="[[item.is]]">[[item.is]]</option>
+              <paper-tab value="[[item.is]]">[[item.is]]</paper-tab>
             </template>
+          </paper-tabs>
           </select>
         </div>
         <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">

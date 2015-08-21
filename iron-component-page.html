@@ -34,7 +34,7 @@ documentation page including demos (if available).
       <paper-toolbar catalog-hidden>
         <div class="flex">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
-          <paper-tabs scrollable id="active" selected="{{active::change}}">
+          <paper-tabs scrollable id="active" attr-for-selected="value" selectable selected="{{active}}">
             <template is="dom-repeat" items="[[docElements]]">
               <paper-tab value="[[item.is]]">[[item.is]]</paper-tab>
             </template>
@@ -42,7 +42,6 @@ documentation page including demos (if available).
               <paper-tab value="[[item.is]]">[[item.is]]</paper-tab>
             </template>
           </paper-tabs>
-          </select>
         </div>
         <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
           <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>

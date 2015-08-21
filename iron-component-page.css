@@ -111,11 +111,6 @@ paper-toolbar a:hover, paper-toolbar a:hover iron-icon, paper-toolbar a.iron-sel
   background: transparent;
 }
 
-#active paper-tab {
-  padding: 0 6px;
-  width: auto;
-}
-
 paper-toolbar a {
   font-size: 14px;
   text-transform: uppercase;

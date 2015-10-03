@@ -161,7 +161,6 @@ documentation page including demos (if available).
       /** The Hydrolysis element descriptors that have been loaded. */
       docElements: {
         type:     Array,
-        observer: '_descriptorsChanged',
         notify: true,
         readOnly: true
       },
@@ -169,7 +168,6 @@ documentation page including demos (if available).
       /** The Hydrolysis behavior descriptors that have been loaded. */
       docBehaviors: {
         type:     Array,
-        observer: '_descriptorsChanged',
         notify: true,
         readOnly: true
       },
@@ -246,6 +244,10 @@ documentation page including demos (if available).
       _srcUrl: String,
     },
 
+    observers: [
+      '_descriptorsChanged(docElements, docBehaviors)'
+    ],
+
     ready: function() {
       var elements = this._loadJson();
       if (elements) {
@@ -318,13 +320,18 @@ documentation page including demos (if available).
       return new URL(src, this.base).toString();
     },
 
-    _descriptorsChanged: function() {
-      if (this._findDescriptor(this.active)) {
-        this._activeChanged();
-        return;
+    _descriptorsChanged: function(docElements, docBehaviors) {
+      function findMatch(el) {
+        return el && el.contentHref && el.contentHref.indexOf(mainFile) > 0;
       }
 
-      if (this.docElements && this.docElements[0]) {
+      var url = this._srcUrl || this.base;
+      var mainFile = url.replace(_baseUrl(this.base), '');
+      var matchedPage = docElements.find(findMatch) || docBehaviors.find(findMatch);
+
+      if (matchedPage) {
+        this.active = matchedPage.is;
+      } else if (this.docElements && this.docElements[0]) {
         this.active = this.docElements[0].is;
       } else if (this.docBehaviors && this.docBehaviors[0]) {
         this.active = this.docBehaviors[0].is;

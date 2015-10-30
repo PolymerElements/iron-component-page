@@ -26,7 +26,7 @@ documentation page including demos (if available).
   <link rel="import" type="css" href="iron-component-page.css">
   <template>
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
-    <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse"></iron-ajax>
+    <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
     <paper-header-panel id="headerPanel" mode="waterfall">
       <paper-toolbar catalog-hidden>
@@ -444,6 +444,10 @@ documentation page including demos (if available).
       this._ajaxLoading = false;
       this._ajaxLastUrl = req.url;
       this._ajaxDesc = req.response;
+    },
+
+    _handleError: function(e) {
+      this.fire('iron-component-page-error', e.detail);
     },
 
     _handleComponentSelectedEvent: function(ev) {

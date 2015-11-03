@@ -28,7 +28,7 @@ documentation page including demos (if available).
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
-    <paper-header-panel id="headerPanel" mode="waterfall">
+    <paper-header-panel id="headerPanel" mode="[[scrollMode]]">
       <paper-toolbar catalog-hidden>
         <div class="flex">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
@@ -185,6 +185,15 @@ documentation page including demos (if available).
         type: Array,
         notify: true,
         readOnly: true
+      },
+
+      /**
+       * The scroll mode for the page. For details about the modes,
+       * see the mode property in paper-header-panel.
+       */
+      scrollMode: {
+        type: String,
+        value: 'waterfall'
       },
 
       /**

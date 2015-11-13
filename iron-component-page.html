@@ -12,10 +12,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
 
 <!--
@@ -174,6 +176,16 @@ documentation page including demos (if available).
       :host([_catalog]) [catalog-hidden] {
         display: none;
       }
+
+      .no-docs {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        @apply(--layout-fit);
+      }
+
+      .docs-header {
+        @apply(--layout-flex);
+      }
     </style>
 
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
@@ -181,7 +193,7 @@ documentation page including demos (if available).
 
     <paper-header-panel id="headerPanel" mode="[[scrollMode]]">
       <paper-toolbar catalog-hidden>
-        <div class="flex">
+        <div class="docs-header">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
           <select id="active" value="{{active::change}}">
             <template is="dom-repeat" items="[[docElements]]">
@@ -205,7 +217,7 @@ documentation page including demos (if available).
             </div>
             <iron-doc-viewer descriptor="{{_activeDescriptor}}"
               on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
-            <div id="nodocs" hidden$="[[_activeDescriptor]]" class="layout fit horizontal center-center">
+            <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
               No documentation found.
             </div>
           </div>

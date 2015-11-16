@@ -33,5 +33,6 @@
     "web-component-tester": "*",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   },
-  "main": "iron-component-page.html"
+  "main": "iron-component-page.html",
+  "ignore": []
 }

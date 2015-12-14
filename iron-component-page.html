@@ -89,7 +89,7 @@ documentation page including demos (if available).
         color: var(--paper-grey-800);
       }
 
-      #demo {
+      #demo iframe {
         @apply(--layout-fit);
       }
 
@@ -100,7 +100,6 @@ documentation page including demos (if available).
         color: var(--paper-grey-400);
       }
 
-      #demo,
       #demo iframe {
         border: 0;
         background: transparent;
@@ -501,7 +500,7 @@ documentation page including demos (if available).
           var demoSrc = new URL(src, this.base).toString();
 
           // If you use history.pushState with iframe.src = url, you will create 2 history entries,
-          // but setting the `src` attribute imperatively will not.
+          // but creating a new iframe dynamically will prevent it.
 
           if (this._iframe) {
             Polymer.dom(this.$.demo).removeChild(this._iframe);

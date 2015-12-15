@@ -194,7 +194,7 @@ documentation page including demos (if available).
       <paper-toolbar catalog-hidden>
         <div class="docs-header">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
-          <select id="active" value="{{active::change}}">
+          <select id="active" value="[[active]]" on-change="_handleMenuItemSelected">
             <template is="dom-repeat" items="[[docElements]]">
               <option value="[[item.is]]">[[item.is]]</option>
             </template>
@@ -214,7 +214,7 @@ documentation page including demos (if available).
             <div id="catalog-heading" catalog-only>
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
             </div>
-            <iron-doc-viewer descriptor="{{_activeDescriptor}}"
+            <iron-doc-viewer id="viewer" descriptor="{{_activeDescriptor}}"
               on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
             <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
               No documentation found.
@@ -428,6 +428,7 @@ documentation page including demos (if available).
         ],
 
         ready: function() {
+          console.log('in ready');
           var elements = this._loadJson();
           if (elements) {
             this.docElements = elements;
@@ -438,6 +439,11 @@ documentation page including demos (if available).
               this._srcChanged();
             }
           }
+          this._setActiveFromHash(window.location.hash);
+          var boundSetActiveFromHash = this._setActiveFromHash.bind(this);
+          window.addEventListener("hashchange", function() {
+            boundSetActiveFromHash(window.location.hash);
+          });
         },
 
         /**
@@ -461,6 +467,26 @@ documentation page including demos (if available).
           } catch(error) {
             console.error('Failure when parsing JSON:', textContent, error);
             throw error;
+          }
+        },
+
+        /**
+         * Load the page identified in the hash.
+         */
+
+        _setActiveFromHash(hash) {
+          console.log("iron-component-page:setActiveFromHash");
+          // hash is either element-name or element-name:{properties|methods|events} or
+          // element-name:{property|method|event}.member-name
+          if (hash) {
+            var elementDelimiter = hash.indexOf(':');
+            elementDelimiter = (elementDelimiter == -1) ? hash.length : elementDelimiter;
+            var el = hash.slice(1, elementDelimiter);
+            if (this.active == el) {
+              this.$.viewer.scrollToSelected();
+            } else {
+              this.active = el;
+            }
           }
         },
 
@@ -631,6 +657,12 @@ documentation page including demos (if available).
 
         _detectAnalyzer: function() {
           this._analyzer = this.docSrc ? this._ajaxDesc : this._hydroDesc;
+        },
+
+        _handleMenuItemSelected: function(e) {
+          if (e.target && e.target.value) {
+            window.location.hash = '#' + e.target.value;
+          }
         },
 
         _handleAjaxResponse: function(e, req) {

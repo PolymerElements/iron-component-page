@@ -214,7 +214,7 @@ documentation page including demos (if available).
             <div id="catalog-heading" catalog-only>
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
             </div>
-            <iron-doc-viewer id="viewer" descriptor="{{_activeDescriptor}}"
+            <iron-doc-viewer catalog="[[catalog]]" id="viewer" descriptor="{{_activeDescriptor}}"
               on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
             <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
               No documentation found.
@@ -428,7 +428,6 @@ documentation page including demos (if available).
         ],
 
         ready: function() {
-          console.log('in ready');
           var elements = this._loadJson();
           if (elements) {
             this.docElements = elements;
@@ -439,11 +438,14 @@ documentation page including demos (if available).
               this._srcChanged();
             }
           }
-          this._setActiveFromHash(window.location.hash);
-          var boundSetActiveFromHash = this._setActiveFromHash.bind(this);
-          window.addEventListener("hashchange", function() {
-            boundSetActiveFromHash(window.location.hash);
-          });
+          // In the catalog, let the catalog do all the routing
+          if (!this.catalog) {
+            this._setActiveFromHash(window.location.hash);
+            var boundSetActiveFromHash = this._setActiveFromHash.bind(this);
+            window.addEventListener("hashchange", function() {
+              boundSetActiveFromHash(window.location.hash);
+            });
+          }
         },
 
         /**
@@ -475,7 +477,6 @@ documentation page including demos (if available).
          */
 
         _setActiveFromHash(hash) {
-          console.log("iron-component-page:setActiveFromHash");
           // hash is either element-name or element-name:{properties|methods|events} or
           // element-name:{property|method|event}.member-name
           if (hash) {
@@ -483,7 +484,7 @@ documentation page including demos (if available).
             elementDelimiter = (elementDelimiter == -1) ? hash.length : elementDelimiter;
             var el = hash.slice(1, elementDelimiter);
             if (this.active == el) {
-              this.$.viewer.scrollToSelected();
+              this.$.viewer.scrollToAnchor();
             } else {
               this.active = el;
             }

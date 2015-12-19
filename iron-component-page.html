@@ -427,6 +427,20 @@ documentation page including demos (if available).
           '_activeChanged(active, _analyzer)'
         ],
 
+        attached: function() {
+          // In the catalog, let the catalog do all the routing
+          if (!this.catalog) {
+            this._setActiveFromHash();
+            this.listen(window, 'hashchange', '_setActiveFromHash');
+          }
+        },
+
+        detached: function() {
+          if (!this.catalog) {
+            this.unlisten(window, 'hashchange', '_setActiveFromHash');
+          }
+        },
+
         ready: function() {
           var elements = this._loadJson();
           if (elements) {
@@ -437,14 +451,6 @@ documentation page including demos (if available).
             if (!this.src && !this.catalog) {
               this._srcChanged();
             }
-          }
-          // In the catalog, let the catalog do all the routing
-          if (!this.catalog) {
-            this._setActiveFromHash();
-            var boundSetActiveFromHash = this._setActiveFromHash.bind(this);
-            window.addEventListener('hashchange', function() {
-              boundSetActiveFromHash();
-            });
           }
         },
 

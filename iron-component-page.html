@@ -214,7 +214,7 @@ documentation page including demos (if available).
             <div id="catalog-heading" catalog-only>
               <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
             </div>
-            <iron-doc-viewer catalog="[[catalog]]" id="viewer" descriptor="{{_activeDescriptor}}"
+            <iron-doc-viewer prefix="[[_fragmentPrefix]]" id="viewer" descriptor="{{_activeDescriptor}}"
               on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
             <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
               No documentation found.
@@ -440,10 +440,10 @@ documentation page including demos (if available).
           }
           // In the catalog, let the catalog do all the routing
           if (!this.catalog) {
-            this._setActiveFromHash(window.location.hash);
+            this._setActiveFromHash();
             var boundSetActiveFromHash = this._setActiveFromHash.bind(this);
-            window.addEventListener("hashchange", function() {
-              boundSetActiveFromHash(window.location.hash);
+            window.addEventListener('hashchange', function() {
+              boundSetActiveFromHash();
             });
           }
         },
@@ -473,21 +473,21 @@ documentation page including demos (if available).
         },
 
         /**
-         * Load the page identified in the hash.
+         * Load the page identified in the fragment identifier.
          */
 
         _setActiveFromHash(hash) {
           // hash is either element-name or element-name:{properties|methods|events} or
           // element-name:{property|method|event}.member-name
+          var hash = window.location.hash;
           if (hash) {
             var elementDelimiter = hash.indexOf(':');
             elementDelimiter = (elementDelimiter == -1) ? hash.length : elementDelimiter;
             var el = hash.slice(1, elementDelimiter);
-            if (this.active == el) {
-              this.$.viewer.scrollToAnchor();
-            } else {
+            if (this.active != el) {
               this.active = el;
             }
+            this.$.viewer.scrollToAnchor(hash);
           }
         },
 
@@ -613,6 +613,15 @@ documentation page including demos (if available).
               if (this._activeDescriptor.is && !document.title) {
                 document.title = this._activeDescriptor.is + " documentation";
               }
+              if (this._activeDescriptor.is && !this.catalog) {
+                this._fragmentPrefix = this._activeDescriptor.is + ':';
+              } else {
+                this._fragmentPrefix = '';
+              }
+              // On initial load, scroll to the selected anchor (if any).
+              // This probably shouldn't be required when we're running
+              // in the catalog, but at the moment it is.
+              this.$.viewer.scrollToAnchor(window.location.hash);
             }
             this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
           }
@@ -634,26 +643,6 @@ documentation page including demos (if available).
           if (!this._findDescriptor(this.active)) {
             this.active = this._getDefaultActive();
           }
-
-          // Scroll to element. Wait one frame so for page load case. Browser
-          // will attempt to jump to the element before it exists in DOM.
-          // TODO: support scrolling to hidden API properties/methods.
-          // TODO: deep link into non-default "active" view in select dropdown.
-          this.async(function() {
-            var hash = window.location.hash;
-            if (hash) {
-              var goToElement = null;
-              // Find element using native shadow dom. Otherwise, fall back to shady.
-              if (Polymer.Settings.useNativeShadow) {
-                goToElement = this.$.view.querySelector(':scope /deep/ ' + hash);
-              } else {
-                goToElement = this.querySelector(hash);
-              }
-              if (goToElement) {
-                goToElement.scrollIntoView(true);
-              }
-            }
-          });
         },
 
         _detectAnalyzer: function() {

@@ -325,7 +325,7 @@ documentation page including demos (if available).
            */
           transitive: {
             type: Boolean,
-            value: false
+            value: true
           },
 
           /** The Hydrolysis element descriptors that have been loaded. */
@@ -654,8 +654,8 @@ documentation page including demos (if available).
 
         _analyzerChanged: function() {
           var analyzer = this._analyzer;
-          this._setDocElements(analyzer && analyzer.elements ? analyzer.elements : []);
-          this._setDocBehaviors(analyzer && analyzer.behaviors ? analyzer.behaviors : []);
+          this._setDocElements(analyzer ? analyzer.elementsForFolder(this.base) : []);
+          this._setDocBehaviors(analyzer ? analyzer.behaviorsForFolder(this.base) : []);
 
           if (!this._findDescriptor(this.active)) {
             this.active = this._getDefaultActive();

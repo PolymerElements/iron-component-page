@@ -12,9 +12,9 @@ thing! https://github.com/PolymerLabs/tedium/issues
 
 -->
 
-[![Build Status](https://travis-ci.org/PolymerElements/iron-component-page.svg?branch=master)](https://travis-ci.org/PolymerElements/iron-component-page)
+[![Build status](https://travis-ci.org/PolymerElements/iron-component-page.svg?branch=master)](https://travis-ci.org/PolymerElements/iron-component-page)
 
-_[Demo and API Docs](https://elements.polymer-project.org/elements/iron-component-page)_
+_[Demo and API docs](https://elements.polymer-project.org/elements/iron-component-page)_
 
 
 ##&lt;iron-component-page&gt;

@@ -543,6 +543,7 @@ documentation page including demos (if available).
 
           this._iframe = document.createElement('iframe');
           this._iframe.src = demoSrc;
+          this._iframe.allowFullscreen = true;
           Polymer.dom(this.$.demo).appendChild(this._iframe);
         },
 

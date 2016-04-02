@@ -15,7 +15,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
@@ -85,7 +87,7 @@ documentation page including demos (if available).
         margin: -2px 5px 0 0;
       }
 
-      paper-toolbar a.iron-selected, paper-toolbar a.iron-selected iron-icon {
+      paper-toolbar paper-item.iron-selected a, paper-toolbar paper-item.iron-selected a iron-icon {
         color: var(--paper-grey-800);
       }
 
@@ -211,10 +213,18 @@ documentation page including demos (if available).
             </template>
           </select>
         </div>
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
-          <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
-        </iron-selector>
+          <paper-dropdown-menu hidden$="[[!docDemos.length]]">
+            <iron-selector attr-for-selected="view" selected="{{view}}" id="links" class="dropdown-content">
+              <paper-item view="docs">
+                <a><iron-icon icon="description"></iron-icon> Docs</a>
+              </paper-item>
+              <template is="dom-repeat" items="[[docDemos]]" as="docDemo">
+                <paper-item view="[[_demoView(docDemo.path)]]">
+                  <a><iron-icon icon="visibility"></iron-icon> <span>[[docDemo.desc]]</span></a>
+                </paper-item>
+              </template>
+            </iron-selector>
+          </paper-dropdown-menu>
       </paper-toolbar>
       <div id="content">
         <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">

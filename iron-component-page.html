@@ -220,7 +220,7 @@ documentation page including demos (if available).
               </paper-item>
               <template is="dom-repeat" items="[[docDemos]]" as="docDemo">
                 <paper-item view="[[_demoView(docDemo.path)]]">
-                  <a><iron-icon icon="visibility"></iron-icon> <span>[[docDemo.desc]]</span></a>
+                  <a><iron-icon icon="visibility"></iron-icon> <span>[[_computeDemoItemLabel(docDemo.desc, index)]]</span></a>
                 </paper-item>
               </template>
             </iron-selector>
@@ -719,6 +719,11 @@ documentation page including demos (if available).
 
         _demoView: function(path) {
           return "demo:" + path;
+        },
+
+        _computeDemoItemLabel: function(demoDesc, index) {
+          var demoNumber = index + 1;
+          return demoDesc ? demoDesc : "Demo " + demoNumber;
         },
 
         _viewType: function(view) {

@@ -15,10 +15,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../paper-drawer-panel/paper-drawer-panel.html">
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../paper-item/paper-item.html">
 <link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/default-theme.html">
 <link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
 
 <!--
 Loads Polymer element and behavior documentation using
@@ -30,12 +34,21 @@ documentation page including demos (if available).
   <template>
     <style>
       :host {
-        font-family: 'Roboto', 'Noto', sans-serif;
         @apply(--layout-fit);
         @apply(--layout);
         @apply(--layout-vertical);
+
+        --primary-background-color: var(--paper-grey-50);
+        --primary-text-color: var(--paper-grey-800);
+        --secondary-text-color: var(--paper-grey-500);
+        --accent-color: var(--paper-pink-500);
+
+        --paper-toolbar-background: var(--primary-background-color);
+        --paper-toolbar-color: var(--secondary-text-color);
+
+        font-family: 'Roboto', 'Noto', sans-serif;
         overflow: hidden;
-        background: var(--paper-grey-50);
+        background: var(--primary-background-color);
       }
 
       p {
@@ -44,13 +57,6 @@ documentation page including demos (if available).
 
       paper-header-panel {
         @apply(--layout-flex);
-        background: var(--paper-grey-50);
-      }
-
-      paper-toolbar {
-        --paper-toolbar-background: var(--paper-grey-50);
-        --paper-toolbar-color: var(--paper-grey-800);
-        flex-shrink: 0;
       }
 
       :host > paper-header-panel {
@@ -62,11 +68,6 @@ documentation page including demos (if available).
         opacity: 1.0;
       }
 
-      #content {
-        display: block;
-        background: var(--paper-grey-50);
-      }
-
       paper-toolbar a {
         margin: 0 10px;
         cursor: pointer;
@@ -76,25 +77,40 @@ documentation page including demos (if available).
         margin-right: 0;
       }
 
-      paper-toolbar a, paper-toolbar a iron-icon {
-        font-weight: normal;
-        color: var(--paper-grey-500);
-      }
-
       paper-toolbar iron-icon {
         margin: -2px 5px 0 0;
       }
 
-      paper-toolbar a.iron-selected, paper-toolbar a.iron-selected iron-icon {
-        color: var(--paper-grey-800);
+      paper-toolbar a.iron-selected , paper-toolbar a.iron-selected iron-icon {
+        color: var(--primary-text-color);
       }
 
       paper-toolbar a:hover, paper-toolbar a:hover iron-icon {
-        color: var(--paper-pink-500);
+        color: var(--accent-color);
       }
 
-      select {
-        cursor: pointer;
+      paper-drawer-panel {
+        --paper-drawer-panel-drawer-container: {
+          background-color: var(--primary-background-color);
+        };
+      }
+
+      [drawer] a {
+        color: var(--primary-text-color);
+        text-decoration: none;
+      }
+
+      [drawer] a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+      }
+
+      [drawer] paper-item {
+        @apply(--paper-font-common-code);
+      }
+
+      [drawer] h3 {
+        padding: 0 16px;
       }
 
       #demo iframe {
@@ -102,10 +118,8 @@ documentation page including demos (if available).
       }
 
       #nodocs {
-        background: var(--paper-grey-50);
         font-size: 24px;
         font-weight: 400;
-        color: var(--paper-grey-400);
       }
 
       #demo iframe {
@@ -132,13 +146,6 @@ documentation page including demos (if available).
         margin: 0 auto;
       }
 
-      #active {
-        font-size: 20px;
-        font-family: Roboto, Noto;
-        border: 0;
-        background: transparent;
-      }
-
       paper-toolbar a {
         font-size: 14px;
         text-transform: uppercase;
@@ -155,7 +162,7 @@ documentation page including demos (if available).
       }
 
       #catalog-heading h2 {
-        color: var(--paper-grey-800);
+        /*color: var(--primary-text-color);*/
         @apply(--paper-font-title);
         margin: 0;
       }
@@ -198,40 +205,52 @@ documentation page including demos (if available).
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
-    <paper-header-panel id="headerPanel" mode="[[scrollMode]]">
-      <paper-toolbar catalog-hidden>
-        <div class="docs-header">
-          <!-- TODO: Replace with paper-dropdown-menu when available -->
-          <select id="active" value="[[active]]" on-change="_handleMenuItemSelected">
-            <template is="dom-repeat" items="[[docElements]]">
-              <option value="[[item.is]]">[[item.is]]</option>
-            </template>
-            <template is="dom-repeat" items="[[docBehaviors]]">
-              <option value="[[item.is]]">[[item.is]]</option>
-            </template>
-          </select>
-        </div>
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
-          <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
-        </iron-selector>
-      </paper-toolbar>
-      <div id="content">
-        <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
-          <div id="docs">
-            <div id="catalog-heading" catalog-only>
-              <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
-            </div>
-            <iron-doc-viewer prefix="[[_fragmentPrefix]]" id="viewer" descriptor="{{_activeDescriptor}}"
-              on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
-            <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
-              No documentation found.
-            </div>
-          </div>
-          <div id="demo"></div>
+    <paper-drawer-panel>
+      <div drawer catalog-hidden>
+        <iron-selector id="active" attr-for-selected="item">
+        <h3>Elements</h3>
+          <template is="dom-repeat" items="[[docElements]]">
+            <paper-item item="[[item.is]]">
+              <a href="#[[item.is]]">[[item.is]]</a>
+            </paper-item>
+          </template>
+          <template is="dom-if" if="[[docBehaviors.length]]">
+            <h3>Behaviors</h3>
+          </template>
+          <template is="dom-repeat" items="[[docBehaviors]]">
+            <paper-item item="[[item.is]]">
+              <a href="#[[item.is]]">[[item.is]]</a>
+            </paper-item>
+          </template>
         </iron-selector>
       </div>
-    </paper-header-panel>
+      <paper-header-panel id="headerPanel" mode="[[scrollMode]]" main>
+        <paper-toolbar catalog-hidden>
+          <div class="docs-header">
+            <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+          </div>
+          <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
+            <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
+            <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
+          </iron-selector>
+        </paper-toolbar>
+        <div id="content">
+          <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
+            <div id="docs">
+              <div id="catalog-heading" catalog-only>
+                <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
+              </div>
+              <iron-doc-viewer prefix="[[_fragmentPrefix]]" id="viewer" descriptor="{{_activeDescriptor}}"
+                on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
+              <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
+                No documentation found.
+              </div>
+            </div>
+            <div id="demo"></div>
+          </iron-selector>
+        </div>
+      </paper-header-panel>
+    </paper-drawer-panel>
   </template>
 
   <script>
@@ -600,7 +619,9 @@ documentation page including demos (if available).
             this.active = this._getDefaultActive();
             return;
           }
-          this.async(function() { this.$.active.value = active; });
+          this.async(function() {
+            this.$.active.selected = active;
+          });
           if (analyzer && analyzer.elementsByTagName) {
             this.$.headerPanel.scroller.scrollTop = 0;
             this._activeDescriptor = this._findDescriptor(active);
@@ -663,12 +684,6 @@ documentation page including demos (if available).
 
         _detectAnalyzer: function() {
           this._analyzer = this.docSrc ? this._ajaxDesc : this._hydroDesc;
-        },
-
-        _handleMenuItemSelected: function(e) {
-          if (e.target && e.target.value) {
-            window.location.hash = '#' + e.target.value;
-          }
         },
 
         _handleAjaxResponse: function(e, req) {

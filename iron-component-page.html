@@ -95,6 +95,10 @@ documentation page including demos (if available).
         };
       }
 
+      [drawer] {
+        overflow: auto;
+      }
+
       [drawer] a {
         color: var(--primary-text-color);
         text-decoration: none;
@@ -208,15 +212,13 @@ documentation page including demos (if available).
     <paper-drawer-panel>
       <div drawer catalog-hidden>
         <iron-selector id="active" attr-for-selected="item">
-        <h3>Elements</h3>
+          <h3>Elements</h3>
           <template is="dom-repeat" items="[[docElements]]">
             <paper-item item="[[item.is]]">
               <a href="#[[item.is]]">[[item.is]]</a>
             </paper-item>
           </template>
-          <template is="dom-if" if="[[docBehaviors.length]]">
-            <h3>Behaviors</h3>
-          </template>
+          <h3 hidden$="[[!docBehaviors.length]]">Behaviors</h3>
           <template is="dom-repeat" items="[[docBehaviors]]">
             <paper-item item="[[item.is]]">
               <a href="#[[item.is]]">[[item.is]]</a>
@@ -227,7 +229,7 @@ documentation page including demos (if available).
       <paper-header-panel id="headerPanel" mode="[[scrollMode]]" main>
         <paper-toolbar catalog-hidden>
           <div class="docs-header">
-            <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+            <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
           </div>
           <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
             <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>

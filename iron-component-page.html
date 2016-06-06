@@ -12,16 +12,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
+
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
 
-<link rel="import" href="../paper-toolbar/paper-toolbar.html">
 
 <link rel="import" href="../px-responsive-layouts/px-responsive-layouts.html">
 
 <!--
+<link rel="import" href="../paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
 Loads Polymer element and behavior documentation using
 [Hydrolysis](https://github.com/PolymerLabs/hydrolysis) and renders a complete
 documentation page including demos (if available).
@@ -211,8 +214,8 @@ documentation page including demos (if available).
 
       <!-- TODO: Toolbar -->
 
-      <paper-toolbar catalog-hidden>
-        <div class="docs-header">
+      <px-navbar catalog-hidden fixed shadow>
+        <div class="docs-header" left>
           <!-- TODO: Replace with paper-dropdown-menu when available -->
           <select id="active" value="[[active]]" on-change="_handleMenuItemSelected">
             <template is="dom-repeat" items="[[docElements]]">
@@ -224,11 +227,15 @@ documentation page including demos (if available).
           </select>
         </div>
 
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
-          <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
-        </iron-selector>
-      </paper-toolbar>
+        <div right>
+
+          <iron-selector class="flex" attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
+            <a view="docs" class="navbar__button"><iron-icon icon="description"></iron-icon> Docs</a>
+            <a view="[[_demoView(docDemos.0.path)]]" class="navbar__button"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
+          </iron-selector>
+
+        </div>
+      </px-navbar>
 
 
       <div class="flex">
@@ -239,7 +246,8 @@ documentation page including demos (if available).
             </template>
           </ul>
         </div>
-        <div class="content">
+
+        <div class="content has-navbar">
           <!-- TODO: Content -->
           <div id="content">
             <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">

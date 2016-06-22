@@ -12,37 +12,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
-
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
-
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
-
-
-<link rel="import" href="../px-responsive-layouts/px-responsive-layouts.html">
-<link rel="import" href="../paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<!--
-
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
+
+<!--
 Loads Polymer element and behavior documentation using
 [Hydrolysis](https://github.com/PolymerLabs/hydrolysis) and renders a complete
 documentation page including demos (if available).
 -->
 
 <dom-module id="iron-component-page">
-  <link rel="import" type="css" href="/predixio.css">
-  <link rel="import" type="css" href="/predixdev.css">
   <template>
     <style>
       :host {
-
+        font-family: 'Roboto', 'Noto', sans-serif;
         @apply(--layout-fit);
         @apply(--layout);
         @apply(--layout-vertical);
         overflow: hidden;
         background: var(--paper-grey-50);
-        @apply(--iron-component-page);
       }
 
       [hidden] {
@@ -59,7 +52,6 @@ documentation page including demos (if available).
       }
 
       paper-toolbar {
-        @apply(--paper-toolbar);
         --paper-toolbar-background: var(--paper-grey-50);
         --paper-toolbar-color: var(--paper-grey-800);
         flex-shrink: 0;
@@ -138,15 +130,15 @@ documentation page including demos (if available).
       }
 
       #docs {
-        max-width: var(--iron-component-page-max-width, 60em);
+        max-width: var(--iron-component-page-max-width, 48em);
         @apply(--iron-component-page-container);
         padding: 20px;
-
+        margin: 0 auto;
       }
 
       #active {
         font-size: 20px;
-
+        font-family: Roboto, Noto;
         border: 0;
         background: transparent;
       }
@@ -211,11 +203,8 @@ documentation page including demos (if available).
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
     <paper-header-panel id="headerPanel" mode="[[scrollMode]]">
-
-      <!-- TODO: Toolbar -->
-
-      <px-navbar catalog-hidden fixed shadow>
-        <div class="docs-header" left>
+      <paper-toolbar catalog-hidden>
+        <div class="docs-header">
           <!-- TODO: Replace with paper-dropdown-menu when available -->
           <select id="active" value="[[active]]" on-change="_handleMenuItemSelected">
             <template is="dom-repeat" items="[[docElements]]">
@@ -226,54 +215,26 @@ documentation page including demos (if available).
             </template>
           </select>
         </div>
-
-        <div right>
-
-          <iron-selector class="flex" attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
-            <a view="docs" class="navbar__button"><iron-icon icon="description"></iron-icon> Docs</a>
-            <a view="[[_demoView(docDemos.0.path)]]" class="navbar__button"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
-          </iron-selector>
-
-        </div>
-      </px-navbar>
-
-
-      <div class="">
-        <div class="sidebar">
-          <ul class="list-ui">
-            <template is="dom-repeat" items="[[docElements]]">
-              <li>[[item.is]]</li>
-            </template>
-          </ul>
-        </div>
-
-        <div class="content has-navbar">
-          <!-- TODO: Content -->
-          <div id="content">
-            <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
-              <div id="docs">
-                <div id="catalog-heading" catalog-only>
-                  <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
-                </div>
-                <iron-doc-viewer prefix="[[_fragmentPrefix]]" id="viewer" descriptor="{{_activeDescriptor}}"
-                  on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
-                <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
-                  No documentation found.
-                </div>
-              </div>
-              <div id="demo"></div>
-            </iron-selector>
+        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
+          <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
+          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
+        </iron-selector>
+      </paper-toolbar>
+      <div id="content">
+        <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
+          <div id="docs">
+            <div id="catalog-heading" catalog-only>
+              <h2><span>[[active]]</span> <span class="version" hidden$="[[!version]]">[[version]]</span></h2>
+            </div>
+            <iron-doc-viewer prefix="[[_fragmentPrefix]]" id="viewer" descriptor="{{_activeDescriptor}}"
+              on-iron-doc-viewer-component-selected="_handleComponentSelectedEvent"></iron-doc-viewer>
+            <div id="nodocs" hidden$="[[_activeDescriptor]]" class="no-docs">
+              No documentation found.
+            </div>
           </div>
-        </div>
+          <div id="demo"></div>
+        </iron-selector>
       </div>
-
-
-
-
-
-
-
-
     </paper-header-panel>
   </template>
 

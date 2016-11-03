@@ -26,7 +26,10 @@
     "paper-header-panel": "PolymerElements/paper-header-panel#^1.0.0",
     "paper-styles": "PolymerElements/paper-styles#^1.0.0",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.0",
-    "polymer": "Polymer/polymer#^1.1.0"
+    "polymer": "Polymer/polymer#^1.1.0",
+    "paper-drawer-panel": "Polymer/Elements/paper-drawer-panel#^1.0.9",
+    "paper-icon-button": "Polymer/Elements/paper-icon-button#^1.0.7",
+    "paper-item": "Polymer/Elements/paper-item#^1.2.0"
   },
   "devDependencies": {
     "test-fixture": "PolymerElements/test-fixture#^1.0.0",

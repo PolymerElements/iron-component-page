@@ -28,9 +28,9 @@
     "polymer": "Polymer/polymer#2.0-preview"
   },
   "devDependencies": {
-    "test-fixture": "PolymerElements/test-fixture#^2.0.0",
-    "web-component-tester": "v6.0.0-prerelease.5",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#v1"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#1.0.0-rc.1",
+    "test-fixture": "PolymerElements/test-fixture#^3.0.0-rc.1",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0-prerelease.6"
   },
   "variants": {
     "1.x": {
@@ -53,8 +53,5 @@
     }
   },
   "main": "iron-component-page.html",
-  "ignore": [],
-  "resolutions": {
-    "test-fixture": "^2.0.0"
-  }
+  "ignore": []
 }

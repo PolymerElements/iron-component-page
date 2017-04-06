@@ -15,7 +15,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../app-layout/app-scroll-effects/effects/waterfall.html">
 <link rel="import" href="../app-layout/app-header/app-header.html">
+<link rel="import" href="../app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
 <link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
@@ -37,7 +39,6 @@ add the `.warning` class to a child.
         @apply --layout-fit;
         @apply --layout;
         @apply --layout-vertical;
-        overflow: hidden;
         background: var(--paper-grey-50);
       }
 
@@ -50,27 +51,6 @@ add the `.warning` class to a child.
       }
 
       app-header {
-        @apply --layout-flex;
-        background: var(--paper-grey-50);
-      }
-
-      app-toolbar {
-        --app-toolbar-background: var(--paper-grey-50);
-        --app-toolbar-color: var(--paper-grey-800);
-        flex-shrink: 0;
-      }
-
-      :host > app-header {
-        opacity: 0;
-        transition: opacity 0.5s;
-      }
-
-      :host(.loaded) > app-header {
-        opacity: 1.0;
-      }
-
-      #content {
-        display: block;
         background: var(--paper-grey-50);
       }
 
@@ -205,24 +185,26 @@ add the `.warning` class to a child.
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
-    <app-header id="headerPanel" mode="[[scrollMode]]">
-      <app-toolbar catalog-hidden>
-        <div class="docs-header">
-          <!-- TODO: Replace with paper-dropdown-menu when available -->
-          <select id="active" value="[[active]]" on-change="_handleMenuItemSelected">
-            <template is="dom-repeat" items="[[docElements]]">
-              <option value="[[item.is]]">[[item.is]]</option>
-            </template>
-            <template is="dom-repeat" items="[[docBehaviors]]">
-              <option value="[[item.is]]">[[item.is]]</option>
-            </template>
-          </select>
-        </div>
-        <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
-          <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
-          <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
-        </iron-selector>
-      </app-toolbar>
+    <app-header-layout>
+      <app-header id="headerPanel" fixed slot="header" effects="waterfall">
+        <app-toolbar catalog-hidden>
+          <div class="docs-header">
+            <!-- TODO: Replace with paper-dropdown-menu when available -->
+            <select id="active" value="[[active]]" on-change="_handleMenuItemSelected">
+              <template is="dom-repeat" items="[[docElements]]">
+                <option value="[[item.is]]">[[item.is]]</option>
+              </template>
+              <template is="dom-repeat" items="[[docBehaviors]]">
+                <option value="[[item.is]]">[[item.is]]</option>
+              </template>
+            </select>
+          </div>
+          <iron-selector attr-for-selected="view" selected="{{view}}" id="links" hidden$="[[!docDemos.length]]">
+            <a view="docs"><iron-icon icon="description"></iron-icon> Docs</a>
+            <a view="[[_demoView(docDemos.0.path)]]"><iron-icon icon="visibility"></iron-icon> <span>Demo</span></a>
+          </iron-selector>
+        </app-toolbar>
+      </app-header>
       <div id="content">
         <iron-selector id="view" selected="[[_viewType(view)]]" attr-for-selected="id">
           <div id="docs">
@@ -239,7 +221,7 @@ add the `.warning` class to a child.
           <div id="demo"></div>
         </iron-selector>
       </div>
-    </app-header>
+    </app-header-layout>
   </template>
 
   <script>
@@ -372,15 +354,6 @@ add the `.warning` class to a child.
             type: Array,
             notify: true,
             readOnly: true
-          },
-
-          /**
-           * The scroll mode for the page. For details about the modes,
-           * see the mode property in app-header.
-           */
-          scrollMode: {
-            type: String,
-            value: 'waterfall'
           },
 
           /**

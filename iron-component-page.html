@@ -185,7 +185,7 @@ add the `.warning` class to a child.
     <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
-    <app-header-layout>
+    <app-header-layout has-scrolling-region>
       <app-header id="headerPanel" fixed slot="header" effects="waterfall">
         <app-toolbar catalog-hidden>
           <div class="docs-header">

@@ -500,7 +500,7 @@ add the `.warning` class to a child.
             if (!Array.isArray(json)) return [];
             return json;
           } catch(error) {
-            console.error('Failure when parsing JSON:', textContent, error);
+            Polymer.Base._error('Failure when parsing JSON:', textContent, error);
             throw error;
           }
         },
@@ -724,7 +724,7 @@ add the `.warning` class to a child.
         _handleComponentSelectedEvent: function(ev) {
           var descriptor = this._findDescriptor(ev.detail);
           if (!descriptor) {
-            console.warn("Could not navigate to ", ev.detail);
+            Polymer.Base._warn("Could not navigate to ", ev.detail);
           }
           else {
             this.active = ev.detail;

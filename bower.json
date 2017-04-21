@@ -26,7 +26,7 @@
     "paper-header-panel": "PolymerElements/paper-header-panel#^1.0.0",
     "paper-styles": "PolymerElements/paper-styles#^1.0.0",
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.0.0",
-    "polymer": "Polymer/polymer#^1.1.0"
+    "polymer": "Polymer/polymer#^1.5.0"
   },
   "devDependencies": {
     "test-fixture": "PolymerElements/test-fixture#^1.0.0",

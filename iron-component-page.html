@@ -12,7 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
-<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../paper-header-panel/paper-header-panel.html">
@@ -34,9 +34,17 @@ add the `.warning` class to a child.
     <style>
       :host {
         font-family: 'Roboto', 'Noto', sans-serif;
-        @apply(--layout-fit);
-        @apply(--layout);
-        @apply(--layout-vertical);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
         overflow: hidden;
         background: var(--paper-grey-50);
       }
@@ -50,7 +58,11 @@ add the `.warning` class to a child.
       }
 
       paper-header-panel {
-        @apply(--layout-flex);
+        -ms-flex: 1 1 0.000000001px;
+        -webkit-flex: 1;
+        flex: 1;
+        -webkit-flex-basis: 0.000000001px;
+        flex-basis: 0.000000001px;
         background: var(--paper-grey-50);
       }
 
@@ -105,7 +117,11 @@ add the `.warning` class to a child.
       }
 
       #demo iframe {
-        @apply(--layout-fit);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
       }
 
       #nodocs {
@@ -192,13 +208,31 @@ add the `.warning` class to a child.
       }
 
       .no-docs {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-center);
-        @apply(--layout-fit);
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-direction: row;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
       }
 
       .docs-header {
-        @apply(--layout-flex);
+        -ms-flex: 1 1 0.000000001px;
+        -webkit-flex: 1;
+        flex: 1;
+        -webkit-flex-basis: 0.000000001px;
+        flex-basis: 0.000000001px;
       }
     </style>
 
@@ -245,7 +279,6 @@ add the `.warning` class to a child.
   <script>
     (function() {
       // var hydrolysis = require('hydrolysis');
-
       /**
        * @param {string} url
        * @return {string} `url` stripped of a file name, if one is present. This
@@ -255,10 +288,8 @@ add the `.warning` class to a child.
       function _baseUrl(url) {
         return url.match(/^(.*?)\/?([^\/]+\.[^\/]+)?$/)[1] + '/';
       }
-
       Polymer({
         is: 'iron-component-page',
-
         properties: {
           /**
            * The URL to an import that declares (or transitively imports) the
@@ -281,7 +312,6 @@ add the `.warning` class to a child.
             type:     String,
             observer: '_srcChanged',
           },
-
           /**
            * The URL to a precompiled JSON descriptor. If you have precompiled
            * and stored a documentation set using Hydrolysis, you can load the
@@ -294,7 +324,6 @@ add the `.warning` class to a child.
             type: String,
             observer: '_srcChanged',
           },
-
           /**
            * The name of a branch used to fetch source for gh-pages.
            * If not specified `master` is used.
@@ -303,7 +332,6 @@ add the `.warning` class to a child.
             type: String,
             value: 'master'
           },
-
           /**
            * The relative root for determining paths to demos and default source
            * detection.
@@ -315,7 +343,6 @@ add the `.warning` class to a child.
               return this.ownerDocument.baseURI.replace(/\#.*$/, '');
             }
           },
-
           /**
            * The element or behavior that will be displayed on the page. Defaults
            * to the element matching the name of the source file.
@@ -325,7 +352,6 @@ add the `.warning` class to a child.
             notify: true,
             value: ''
           },
-
           /**
            * The current view. Can be `docs` or `demo`.
            */
@@ -334,7 +360,6 @@ add the `.warning` class to a child.
             value: 'docs',
             notify: true
           },
-
           /**
            * Whether _all_ dependencies should be loaded and documented.
            *
@@ -344,7 +369,6 @@ add the `.warning` class to a child.
             type: Boolean,
             value: false
           },
-
           /** The Hydrolysis element descriptors that have been loaded. */
           docElements: {
             type:     Array,
@@ -354,7 +378,6 @@ add the `.warning` class to a child.
               return [];
             }
           },
-
           /** The Hydrolysis behavior descriptors that have been loaded. */
           docBehaviors: {
             type:     Array,
@@ -364,7 +387,6 @@ add the `.warning` class to a child.
               return [];
             }
           },
-
           /**
            * Demos for the currently selected element.
            */
@@ -373,7 +395,6 @@ add the `.warning` class to a child.
             notify: true,
             readOnly: true
           },
-
           /**
            * The scroll mode for the page. For details about the modes,
            * see the mode property in paper-header-panel.
@@ -382,16 +403,13 @@ add the `.warning` class to a child.
             type: String,
             value: 'waterfall'
           },
-
           /**
            * The currently displayed element.
            *
            * @type {!hydrolysis.ElementDescriptor}
            */
           _activeDescriptor: Object,
-
           _fragmentPrefix: String,
-
           /**
            * Toggle flag to be used when this element is being displayed in the
            * Polymer Elements catalog.
@@ -401,12 +419,10 @@ add the `.warning` class to a child.
             value: false,
             reflectToAttribute: true
           },
-
           /**
            * An optional version string.
            */
           version: String,
-
           /**
            * The hydrolysis analyzer.
            *
@@ -424,7 +440,6 @@ add the `.warning` class to a child.
             type: Object,
             observer: '_detectAnalyzer'
           },
-
           /** Whether the analyzer is loading source. */
           _loading: {
             type:     Boolean,
@@ -438,22 +453,18 @@ add the `.warning` class to a child.
             type: Boolean,
             observer: '_detectLoading'
           },
-
           /** The complete URL to this component's demo. */
           _demoUrl: {
             type: String,
             value: '',
           },
-
           /** The complete URL to this component's source. */
           _srcUrl: String,
         },
-
         observers: [
           '_updateFrameSrc(view, base)',
           '_activeChanged(active, _analyzer)'
         ],
-
         attached: function() {
           // In the catalog, let the catalog do all the routing
           if (!this.catalog) {
@@ -461,13 +472,11 @@ add the `.warning` class to a child.
             this.listen(window, 'hashchange', '_setActiveFromHash');
           }
         },
-
         detached: function() {
           if (!this.catalog) {
             this.unlisten(window, 'hashchange', '_setActiveFromHash');
           }
         },
-
         ready: function() {
           var elements = this._loadJson();
           if (elements) {
@@ -480,7 +489,6 @@ add the `.warning` class to a child.
             }
           }
         },
-
         /**
          * Loads an array of hydrolysis element descriptors (as JSON) from the text
          * content of this element, if present.
@@ -494,7 +502,6 @@ add the `.warning` class to a child.
           });
           textContent = textContent.trim();
           if (textContent === '') return null;
-
           try {
             var json = JSON.parse(textContent);
             if (!Array.isArray(json)) return [];
@@ -504,11 +511,9 @@ add the `.warning` class to a child.
             throw error;
           }
         },
-
         /**
          * Load the page identified in the fragment identifier.
          */
-
         _setActiveFromHash: function(hash) {
           // hash is either element-name or element-name:{properties|methods|events} or
           // element-name:{property|method|event}.member-name
@@ -523,7 +528,6 @@ add the `.warning` class to a child.
             this.$.viewer.scrollToAnchor(hash);
           }
         },
-
         _srcChanged: function() {
           var srcUrl;
           if (this.docSrc) {
@@ -541,25 +545,20 @@ add the `.warning` class to a child.
             var base = _baseUrl(this.base);
             srcUrl = new URL(base.match(/([^\/]*)\/$/)[1] + ".html", base).toString();
           }
-
           // Rewrite gh-pages URLs to https://rawgit.com/
           var match = srcUrl.match(/([^\/\.]+)\.github\.io\/([^\/]+)\/?([^\/]*)$/);
           if (match) {
             srcUrl = "https://cdn.rawgit.com/" + match[1] + "/" + match[2] + "/" + this.branchName + "/" + match[3];
           }
-
           this._baseUrl = _baseUrl(srcUrl);
           this._srcUrl  = srcUrl;
           if (!this._hydroLoading) this.$.analyzer.analyze();
         },
-
         _updateFrameSrc: function(view) {
           if (!view || view.indexOf("demo:") !== 0) return "about:blank";
-
           var src = view.split(':')[1];
           var demoSrc = new URL(src, this.base).toString();
           var self = this;
-
           // If you use history.pushState with iframe.src = url, you will create 2 history entries,
           // but creating a new iframe dynamically will prevent it.
           if (this._iframe) {
@@ -568,7 +567,6 @@ add the `.warning` class to a child.
           this._iframe = document.createElement('iframe');
           this._iframe.src = demoSrc;
           this._iframe.allowFullscreen = true;
-
           // Fixes iron-component-page/issues/80
           // Scrollbar issue in desktop/mobile Safari that prevents the user
           // from scrolling the demos. In this case, we need to force layout
@@ -590,15 +588,12 @@ add the `.warning` class to a child.
               self._iframe.style.height = '100%';
             }
           });
-
           Polymer.dom(this.$.demo).appendChild(this._iframe);
         },
-
         _getDefaultActive: function() {
           var matchedPage;
           var url = this._srcUrl || this.base;
           var mainFile = url.replace(_baseUrl(this.base), '');
-
           function findMatch(list) {
             for (var item, i = 0; i < list.length; i++) {
               item = list[i];
@@ -608,9 +603,7 @@ add the `.warning` class to a child.
             }
             return null;
           }
-
           matchedPage = findMatch(this.docElements) || findMatch(this.docBehaviors);
-
           if (matchedPage) {
             return matchedPage.is;
           } else if (this.docElements.length > 0) {
@@ -620,13 +613,10 @@ add the `.warning` class to a child.
           }
           return null;
         },
-
         _findDescriptor: function(name) {
           if (!this._analyzer) return null;
-
           var descriptor = this._analyzer.elementsByTagName[name];
           if (descriptor) return descriptor;
-
           for (var i = 0; i < this._analyzer.behaviors.length; i++) {
             if (this._analyzer.behaviors[i].is === name) {
               return this._analyzer.behaviors[i];
@@ -634,7 +624,6 @@ add the `.warning` class to a child.
           }
           return null;
         },
-
         _activeChanged: function(active, analyzer) {
           if (active === '') {
             this.active = this._getDefaultActive();
@@ -682,45 +671,36 @@ add the `.warning` class to a child.
             this._setDocDemos(this._activeDescriptor ? this._activeDescriptor.demos : []);
           }
         },
-
         _loadingChanged: function() {
           this.toggleClass('loaded', !this._loading);
         },
-
         _detectLoading: function() {
           this._loading = this.docSrc ? this._ajaxLoading : this._hydroLoading;
         },
-
         _analyzerChanged: function() {
           var analyzer = this._analyzer;
           this._setDocElements(analyzer && analyzer.elements ? analyzer.elements : []);
           this._setDocBehaviors(analyzer && analyzer.behaviors ? analyzer.behaviors : []);
-
           if (!this._findDescriptor(this.active)) {
             this.active = this._getDefaultActive();
           }
         },
-
         _detectAnalyzer: function() {
           this._analyzer = this.docSrc ? this._ajaxDesc : this._hydroDesc;
         },
-
         _handleMenuItemSelected: function(e) {
           if (e.target && e.target.value) {
             window.location.hash = '#' + e.target.value;
           }
         },
-
         _handleAjaxResponse: function(e, req) {
           this._ajaxLoading = false;
           this._ajaxLastUrl = req.url;
           this._ajaxDesc = req.response;
         },
-
         _handleError: function(e) {
           this.fire('iron-component-page-error', e.detail);
         },
-
         _handleComponentSelectedEvent: function(ev) {
           var descriptor = this._findDescriptor(ev.detail);
           if (!descriptor) {
@@ -730,7 +710,6 @@ add the `.warning` class to a child.
             this.active = ev.detail;
           }
         },
-
         /**
          * Renders this element into static HTML for offline use.
          *
@@ -746,11 +725,9 @@ add the `.warning` class to a child.
                  jsonText.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n' +
                  '</' + this.is + '>';
         },
-
         _demoView: function(path) {
           return "demo:" + path;
         },
-
         _viewType: function(view) {
           return view ? view.split(":")[0] : null;
         }

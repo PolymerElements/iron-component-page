@@ -182,7 +182,7 @@ add the `warning` slot to a child.
       }
     </style>
 
-    <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}"></hydrolysis-analyzer>
+    <hydrolysis-analyzer id="analyzer" src="[[_srcUrl]]" transitive="[[transitive]]" clean analyzer="{{_hydroDesc}}" loading="{{_hydroLoading}}" resolver="permissive"></hydrolysis-analyzer>
     <iron-ajax id="ajax" url="[[docSrc]]" handle-as="json" on-response="_handleAjaxResponse" on-error="_handleError"></iron-ajax>
 
     <app-header-layout has-scrolling-region>
@@ -324,7 +324,7 @@ add the `warning` slot to a child.
            */
           transitive: {
             type: Boolean,
-            value: false
+            value: true
           },
 
           /** The Hydrolysis element descriptors that have been loaded. */
@@ -666,8 +666,8 @@ add the `warning` slot to a child.
 
         _analyzerChanged: function() {
           var analyzer = this._analyzer;
-          this._setDocElements(analyzer && analyzer.elements ? analyzer.elements : []);
-          this._setDocBehaviors(analyzer && analyzer.behaviors ? analyzer.behaviors : []);
+          this._setDocElements(analyzer ? analyzer.elementsForFolder(this.base) : []);
+          this._setDocBehaviors(analyzer ? analyzer.behaviorsForFolder(this.base) : []);
 
           if (!this._findDescriptor(this.active)) {
             this.active = this._getDefaultActive();

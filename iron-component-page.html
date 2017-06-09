@@ -47,6 +47,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       iron-doc-nav {
         height: 100%;
         overflow-y: auto;
+        overflow-x: hidden;
       }
 
       iron-doc-viewer {
@@ -166,7 +167,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _descriptorChanged(descriptor) {
-          if (!descriptor || this._urlHash) {
+          if (!descriptor || this._changing) {
+            return;
+          }
+
+          this._changing = true;
+          this._descriptor = _flatten(descriptor);
+          this._changing = false;
+
+          if (this._urlHash) {
             return;
           }
 
@@ -174,8 +183,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               && descriptor.metadata.polymer
               && descriptor.metadata.polymer.behaviors;
 
-          if ((descriptor.elements || []).length) {
-            this._path = '/elements/' + descriptor.elements[0].tagname;
+          if ((descriptor.namespaces || []).length) {
+            this._path = '/namespaces/' + descriptor.namespaces[0].name;
+          } else if ((descriptor.elements || []).length) {
+            var element = descriptor.elements;
+            this._path = '/elements/' + (element.tagname || element.name);
           } else if ((behaviors || []).length) {
             this._path = '/behaviors/' + behaviors[0].name;
           } else if ((descriptor.mixins || []).length) {
@@ -212,6 +224,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._changing = false;
         }
       });
+
+      function _flatten(descriptor, flat) {
+        if (!flat) {
+          flat = {
+            namespaces: [],
+            elements: [],
+            metadata: {
+              polymer: {
+                behaviors: []
+              }
+            },
+            mixins: [],
+            classes: [],
+          };
+        }
+        for (var i = 0; i < (descriptor.namespaces || []).length; i++) {
+          _flatten(descriptor.namespaces[i], flat);
+          flat.namespaces.push(descriptor.namespaces[i]);
+        }
+        for (var i = 0; i < (descriptor.classes || []).length; i++) {
+          flat.classes.push(descriptor.classes[i]);
+        }
+        for (var i = 0; i < (descriptor.elements || []).length; i++) {
+          flat.elements.push(descriptor.elements[i]);
+        }
+        var descriptorBehaviors =
+            ((descriptor.metadata || {}).polymer || {}).behaviors;
+        for (var i = 0; i < (descriptorBehaviors || []).length; i++) {
+          flat.metadata.polymer.behaviors.push(descriptorBehaviors[i]);
+        }
+        for (var i = 0; i < (descriptor.mixins || []).length; i++) {
+          flat.mixins.push(descriptor.mixins[i]);
+        }
+        return flat;
+      }
     })();
   </script>
 </dom-module>

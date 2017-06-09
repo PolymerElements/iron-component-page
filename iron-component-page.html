@@ -40,11 +40,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-drawer-content-container: {
           background-color: #f9f9f9;
         }
-      };
+      }
 
       iron-doc-nav {
         height: 100%;
         overflow-y: auto;
+      }
+
+      iron-doc-viewer {
+        --iron-doc-title: {
+          display: none;
+        }
       }
     </style>
 
@@ -71,13 +77,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header slot="header" fixed>
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div condensed-title>Element &lt;iron-doc-viewer&gt;</div>
+            <div condensed-title>[[_title]]</div>
           </app-toolbar>
         </app-header>
 
         <iron-doc-viewer
             id="viewer"
             descriptor="[[_descriptor]]"
+            title="{{_title}}"
             path="[[_path]]"
             fragment-prefix="[[_path]]#"
             scroll-to="[[_scrollTo]]">
@@ -103,6 +110,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           _path: {
             type: String,
             observer: '_pathChanged'
+          },
+
+          _title: {
+            type: String,
+            observer: '_titleChanged'
           },
 
           _urlHash: {
@@ -158,6 +170,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
+        _titleChanged(title) {
+          window.document.title = title;
+        },
+
         _urlHashChanged(urlHash) {
           if (this._changing) {
             return;
@@ -166,9 +182,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._changing = true;
           this._path = parts[0];
           this._scrollTo = parts[1];
-          console.log('set scrollTo', this._scrollTo);
           this._changing = false;
         }
       });
     })();
   </script>
+</dom-module>

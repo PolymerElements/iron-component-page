@@ -20,7 +20,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-location/iron-location.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
 
 <dom-module id="iron-component-page">
   <template>
@@ -52,6 +54,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           display: none;
         }
       }
+
+      #error-toast {
+        background-color: var(--paper-red-600);
+      }
     </style>
 
     <iron-location hash="{{_urlHash}}"></iron-location>
@@ -60,8 +66,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         auto
         url="[[descriptorUrl]]"
         handle-as="json"
-        last-response="{{_descriptor}}">
+        last-response="{{_descriptor}}"
+        loading="{{_loading}}"
+        last-error="{{_error}}">
     </iron-ajax>
+
+    <paper-toast id="loading-toast" opened="[[_loading]]" duration="0">
+      Loading descriptor ...
+    </paper-toast>
+
+    <paper-toast id="error-toast" opened="[[_error]]" duration="0">
+      Could not load descriptor "[[descriptorUrl]]". <br> [[_error.error]]
+    </paper-toast>
 
     <app-drawer-layout id="layout" fullbleed>
 
@@ -100,7 +116,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is: 'iron-component-page',
 
         properties: {
-          descriptorUrl: String,
+          descriptorUrl: {
+            type: String,
+            observer: '_descriptorUrlChanged'
+          },
+
+          _loading: Boolean,
+
+          _error: Object,
 
           _descriptor: {
             type: Object,
@@ -136,6 +159,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (pos >= 0) {
             this._urlHash = this._urlHash.substring(0, pos);
           }
+        },
+
+        _descriptorUrlChanged() {
+          this._error = null;
         },
 
         _descriptorChanged(descriptor) {

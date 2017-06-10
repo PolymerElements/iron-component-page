@@ -86,7 +86,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-doc-nav
             descriptor="[[_descriptor]]"
             path="{{_path}}"
-            on-select="_clearScroll">
+            base-href="#"
+            on-select="_onNavSelect">
         </iron-doc-nav>
       </app-drawer>
 
@@ -131,10 +132,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             observer: '_descriptorChanged'
           },
 
-          _path: {
-            type: String,
-            observer: '_pathChanged'
-          },
+          _path: String,
 
           _title: {
             type: String,
@@ -146,19 +144,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             observer: '_urlHashChanged'
           },
 
-          _scrollTo: String,
-
-          _changing: {
-            type: Boolean,
-            value: false
-          }
+          _scrollTo: String
         },
 
-        _clearScroll() {
+        _onNavSelect() {
           document.body.scrollTop = 0;
-          var pos = this._urlHash.indexOf('#');
-          if (pos >= 0) {
-            this._urlHash = this._urlHash.substring(0, pos);
+          if (this.$.layout.narrow) {
+            this.$.drawer.close();
           }
         },
 
@@ -197,31 +189,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
-        _pathChanged(path) {
-          if (this._changing) {
-            return;
-          }
-          this._changing = true;
-          this._urlHash = path;
-          this._changing = false;
-          if (this.$.layout.narrow) {
-            this.$.drawer.close();
-          }
-        },
-
         _titleChanged(title) {
           window.document.title = title;
         },
 
         _urlHashChanged(urlHash) {
-          if (this._changing) {
-            return;
-          }
           var parts = urlHash.split('#');
-          this._changing = true;
           this._path = parts[0];
           this._scrollTo = parts[1];
-          this._changing = false;
         }
       });
 

@@ -18,7 +18,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer-default-theme.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../iron-location/iron-location.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-styles/typography.html">
@@ -61,8 +60,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <iron-location hash="{{_urlHash}}"></iron-location>
-
     <iron-ajax
         auto
         url="[[descriptorUrl]]"
@@ -85,8 +82,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" swipe-open>
         <iron-doc-nav
             descriptor="[[_descriptor]]"
-            path="{{_path}}"
-            base-href="#"
+            path="[[_path]]"
             on-select="_onNavSelect">
         </iron-doc-nav>
       </app-drawer>
@@ -100,12 +96,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </app-header>
 
         <iron-doc-viewer
-            id="viewer"
             descriptor="[[_descriptor]]"
             title="{{_title}}"
-            path="[[_path]]"
-            fragment-prefix="[[_path]]#"
-            scroll-to="[[_scrollTo]]">
+            path="{{_path}}">
         </iron-doc-viewer>
 
       </app-header-layout>
@@ -137,14 +130,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           _title: {
             type: String,
             observer: '_titleChanged'
-          },
-
-          _urlHash: {
-            type: String,
-            observer: '_urlHashChanged'
-          },
-
-          _scrollTo: String
+          }
         },
 
         _onNavSelect() {
@@ -167,9 +153,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._descriptor = _flatten(descriptor);
           this._changing = false;
 
-          if (this._urlHash) {
-            return;
-          }
+          return;
 
           var behaviors = descriptor.metadata
               && descriptor.metadata.polymer
@@ -191,12 +175,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _titleChanged(title) {
           window.document.title = title;
-        },
-
-        _urlHashChanged(urlHash) {
-          var parts = urlHash.split('#');
-          this._path = parts[0];
-          this._scrollTo = parts[1];
         }
       });
 

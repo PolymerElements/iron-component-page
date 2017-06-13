@@ -97,6 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <iron-doc-viewer
             descriptor="[[_descriptor]]"
+            base-href="[[baseHref]]"
             title="{{_title}}"
             path="{{_path}}">
         </iron-doc-viewer>
@@ -115,6 +116,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: String,
             observer: '_descriptorUrlChanged'
           },
+
+          /**
+           * By default all routing is performed using the URL fragment
+           * (e.g. `docs.html#/elements/my-element`). If your server supports
+           * it and you would like to use the real URL path instead (e.g.
+           * `/docs/elements/my-element`), set this to the base path where the
+           * page is mounted (e.g. `/` or `/docs/`).
+           */
+          baseHref: String,
 
           _loading: Boolean,
 

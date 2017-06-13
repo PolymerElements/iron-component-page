@@ -159,7 +159,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _onNavSelect() {
-          document.body.scrollTop = 0;
+          // Note we need to listen for this event, and can't rely just on the
+          // path changing, because the user might click on the nav item they
+          // are already viewing.
+          window.document.body.scrollTop = 0;
           if (this._narrow) {
             this.$.drawer.close();
           }

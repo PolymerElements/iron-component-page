@@ -112,8 +112,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is: 'iron-component-page',
 
         properties: {
+          /**
+           * URL of the Polymer Analyzer descriptor to fetch and display.
+           */
           descriptorUrl: {
             type: String,
+            value: 'analysis.json',
             observer: '_descriptorUrlChanged'
           },
 

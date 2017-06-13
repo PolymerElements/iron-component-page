@@ -26,8 +26,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="iron-component-page">
   <template>
     <style include="iron-doc-viewer-default-theme">
+      [hidden] {
+        display: none;
+      }
+
       iron-doc-viewer {
-        margin: 16px 0 0 24px;
+        margin: 20px 0 0 20px;
         max-width: 56em;
       }
 
@@ -77,7 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       Could not load descriptor "[[descriptorUrl]]". <br> [[_error.error]]
     </paper-toast>
 
-    <app-drawer-layout id="layout" fullbleed>
+    <app-drawer-layout fullbleed narrow="{{_narrow}}">
 
       <app-drawer id="drawer" slot="drawer" swipe-open>
         <iron-doc-nav
@@ -90,7 +94,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-header-layout>
         <app-header slot="header" fixed>
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <paper-icon-button
+                icon="menu"
+                drawer-toggle
+                hidden$="[[!_narrow]]">
+            </paper-icon-button>
+
             <div condensed-title>[[_title]]</div>
           </app-toolbar>
         </app-header>
@@ -141,6 +150,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           _path: String,
 
+          _narrow: Boolean,
+
           _title: {
             type: String,
             observer: '_titleChanged'
@@ -149,7 +160,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _onNavSelect() {
           document.body.scrollTop = 0;
-          if (this.$.layout.narrow) {
+          if (this._narrow) {
             this.$.drawer.close();
           }
         },

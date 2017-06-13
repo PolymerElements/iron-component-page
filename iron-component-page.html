@@ -166,25 +166,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._changing = true;
           this._descriptor = _flatten(descriptor);
           this._changing = false;
-
-          return;
-
-          var behaviors = descriptor.metadata
-              && descriptor.metadata.polymer
-              && descriptor.metadata.polymer.behaviors;
-
-          if ((descriptor.namespaces || []).length) {
-            this._path = '/namespaces/' + descriptor.namespaces[0].name;
-          } else if ((descriptor.elements || []).length) {
-            var element = descriptor.elements;
-            this._path = '/elements/' + (element.tagname || element.name);
-          } else if ((behaviors || []).length) {
-            this._path = '/behaviors/' + behaviors[0].name;
-          } else if ((descriptor.mixins || []).length) {
-            this._path = '/mixins/' + descriptor.mixins[0].name;
-          } else if ((descriptor.classes || []).length) {
-            this._path = '/classes/' + descriptor.classes[0].name;
-          }
         },
 
         _titleChanged(title) {

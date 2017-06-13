@@ -52,7 +52,7 @@ your custom element project.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
   <link rel="import" href="/bower_components/iron-component-page/iron-component-page.html">
 </head>
 <body>

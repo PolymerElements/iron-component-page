@@ -53,6 +53,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         overflow-x: hidden;
       }
 
+      /**
+       * iron-doc-viewer uses scrollIntoView for fragment links, but this
+       * doesn't take into account our app-header, so by default when our
+       * scroll block is the document, we'll scroll things hidden underneath
+       * the app-header.
+       */
+      #scroller {
+        overflow-y: auto;
+        height: calc(100vh - 64px);
+      }
+
       iron-doc-viewer {
         --iron-doc-title: {
           display: none;
@@ -104,12 +115,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </app-toolbar>
         </app-header>
 
-        <iron-doc-viewer
-            descriptor="[[_descriptor]]"
-            base-href="[[baseHref]]"
-            title="{{_title}}"
-            path="{{_path}}">
-        </iron-doc-viewer>
+        <div id="scroller">
+          <iron-doc-viewer
+              descriptor="[[_descriptor]]"
+              base-href="[[baseHref]]"
+              title="{{_title}}"
+              path="{{_path}}">
+          </iron-doc-viewer>
+        </div>
 
       </app-header-layout>
     </app-drawer-layout>

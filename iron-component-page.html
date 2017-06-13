@@ -14,8 +14,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-doc-viewer/default-theme.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-nav.html">
-<link rel="import" href="../iron-doc-viewer/iron-doc-viewer-default-theme.html">
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
@@ -25,9 +25,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="iron-component-page">
   <template>
-    <style include="iron-doc-viewer-default-theme">
+    <style include="iron-doc-default-theme">
+      [hidden] {
+        display: none;
+      }
+
       iron-doc-viewer {
-        margin: 16px 0 0 24px;
+        margin: 20px 0 0 20px;
         max-width: 56em;
       }
 
@@ -35,6 +39,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply --paper-font-headline;
         color: white;
         background-color: #5a5a5a;
+      }
+
+      [condensed-title] {
+        white-space: nowrap;
       }
 
       app-drawer {
@@ -47,6 +55,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
+      }
+
+      /**
+       * iron-doc-viewer uses scrollIntoView for fragment links, but this
+       * doesn't take into account our app-header, so by default when our
+       * scroll block is the document, we'll scroll things hidden underneath
+       * the app-header.
+       */
+      #scroller {
+        overflow-y: auto;
+        height: calc(100vh - 64px);
       }
 
       iron-doc-viewer {
@@ -77,7 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       Could not load descriptor "[[descriptorUrl]]". <br> [[_error.error]]
     </paper-toast>
 
-    <app-drawer-layout id="layout" fullbleed>
+    <app-drawer-layout fullbleed narrow="{{_narrow}}">
 
       <app-drawer id="drawer" slot="drawer" swipe-open>
         <iron-doc-nav
@@ -90,16 +109,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-header-layout>
         <app-header slot="header" fixed>
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <paper-icon-button
+                icon="menu"
+                drawer-toggle
+                hidden$="[[!_narrow]]">
+            </paper-icon-button>
+
             <div condensed-title>[[_title]]</div>
           </app-toolbar>
         </app-header>
 
-        <iron-doc-viewer
-            descriptor="[[_descriptor]]"
-            title="{{_title}}"
-            path="{{_path}}">
-        </iron-doc-viewer>
+        <div id="scroller">
+          <iron-doc-viewer
+              descriptor="[[_descriptor]]"
+              base-href="[[baseHref]]"
+              title="{{_title}}"
+              path="{{_path}}">
+          </iron-doc-viewer>
+        </div>
 
       </app-header-layout>
     </app-drawer-layout>
@@ -111,10 +138,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is: 'iron-component-page',
 
         properties: {
+          /**
+           * URL of the Polymer Analyzer descriptor to fetch and display.
+           */
           descriptorUrl: {
             type: String,
+            value: 'analysis.json',
             observer: '_descriptorUrlChanged'
           },
+
+          /**
+           * By default all routing is performed using the URL fragment
+           * (e.g. `docs.html#/elements/my-element`). If your server supports
+           * it and you would like to use the real URL path instead (e.g.
+           * `/docs/elements/my-element`), set this to the base path where the
+           * page is mounted (e.g. `/` or `/docs/`).
+           */
+          baseHref: String,
 
           _loading: Boolean,
 
@@ -127,6 +167,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           _path: String,
 
+          _narrow: Boolean,
+
           _title: {
             type: String,
             observer: '_titleChanged'
@@ -134,8 +176,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _onNavSelect() {
-          document.body.scrollTop = 0;
-          if (this.$.layout.narrow) {
+          // Note we need to listen for this event, and can't rely just on the
+          // path changing, because the user might click on the nav item they
+          // are already viewing.
+          window.document.body.scrollTop = 0;
+          if (this._narrow) {
             this.$.drawer.close();
           }
         },
@@ -152,25 +197,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._changing = true;
           this._descriptor = _flatten(descriptor);
           this._changing = false;
-
-          return;
-
-          var behaviors = descriptor.metadata
-              && descriptor.metadata.polymer
-              && descriptor.metadata.polymer.behaviors;
-
-          if ((descriptor.namespaces || []).length) {
-            this._path = '/namespaces/' + descriptor.namespaces[0].name;
-          } else if ((descriptor.elements || []).length) {
-            var element = descriptor.elements;
-            this._path = '/elements/' + (element.tagname || element.name);
-          } else if ((behaviors || []).length) {
-            this._path = '/behaviors/' + behaviors[0].name;
-          } else if ((descriptor.mixins || []).length) {
-            this._path = '/mixins/' + descriptor.mixins[0].name;
-          } else if ((descriptor.classes || []).length) {
-            this._path = '/classes/' + descriptor.classes[0].name;
-          }
         },
 
         _titleChanged(title) {

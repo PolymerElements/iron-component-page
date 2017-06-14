@@ -30,11 +30,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: none;
       }
 
-      iron-doc-viewer {
-        margin: 20px 0 0 20px;
-        max-width: 56em;
-      }
-
       app-header {
         @apply --paper-font-headline;
         color: white;
@@ -66,9 +61,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #scroller {
         overflow-y: auto;
         height: calc(100vh - 64px);
+        display: flex;
       }
 
       iron-doc-viewer {
+        flex-grow: 1;
+
         --iron-doc-title: {
           display: none;
         }
@@ -123,6 +121,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-doc-viewer
               descriptor="[[_descriptor]]"
               base-href="[[baseHref]]"
+              demo-src-prefix="[[demoSrcPrefix]]"
               title="{{_title}}"
               path="{{_path}}">
           </iron-doc-viewer>
@@ -155,6 +154,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            * page is mounted (e.g. `/` or `/docs/`).
            */
           baseHref: String,
+
+          /**
+           * URL prefix for demo iframes.
+           */
+          demoSrcPrefix: String,
 
           _loading: Boolean,
 

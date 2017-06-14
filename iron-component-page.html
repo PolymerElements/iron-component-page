@@ -36,6 +36,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: #5a5a5a;
       }
 
+      [drawer-toggle] {
+        flex-shrink: 0;
+      }
+
       [condensed-title] {
         white-space: nowrap;
       }
@@ -99,6 +103,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" swipe-open>
         <iron-doc-nav
             descriptor="[[_descriptor]]"
+            base-href="[[baseHref]]"
             path="[[_path]]"
             on-select="_onNavSelect">
         </iron-doc-nav>
@@ -119,6 +124,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <div id="scroller">
           <iron-doc-viewer
+              id="viewer"
               descriptor="[[_descriptor]]"
               base-href="[[baseHref]]"
               demo-src-prefix="[[demoSrcPrefix]]"
@@ -148,10 +154,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           /**
            * By default all routing is performed using the URL fragment
-           * (e.g. `docs.html#/elements/my-element`). If your server supports
-           * it and you would like to use the real URL path instead (e.g.
-           * `/docs/elements/my-element`), set this to the base path where the
-           * page is mounted (e.g. `/` or `/docs/`).
+           * (e.g. `docs.html#/elements/my-element`).
+           *
+           * If your server supports it and you would like to use the real URL
+           * path instead (e.g. `/api/docs/elements/my-element`), set this to
+           * the base path where the page is mounted, omitting the trailing
+           * slash (e.g. `/api/docs` or *empty string* for the root path).
            */
           baseHref: String,
 
@@ -183,7 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // Note we need to listen for this event, and can't rely just on the
           // path changing, because the user might click on the nav item they
           // are already viewing.
-          window.document.body.scrollTop = 0;
+          this.$.viewer.scrollIntoView();
           if (this._narrow) {
             this.$.drawer.close();
           }

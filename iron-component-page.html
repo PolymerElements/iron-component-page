@@ -153,10 +153,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           /**
            * By default all routing is performed using the URL fragment
-           * (e.g. `docs.html#/elements/my-element`). If your server supports
-           * it and you would like to use the real URL path instead (e.g.
-           * `/docs/elements/my-element`), set this to the base path where the
-           * page is mounted (e.g. `/` or `/docs/`).
+           * (e.g. `docs.html#/elements/my-element`).
+           *
+           * If your server supports it and you would like to use the real URL
+           * path instead (e.g. `/api/docs/elements/my-element`), set this to
+           * the base path where the page is mounted, omitting the trailing
+           * slash (e.g. `/api/docs` or *empty string* for the root path).
            */
           baseHref: String,
 

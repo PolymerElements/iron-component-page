@@ -75,8 +75,9 @@ By default it uses the URL fragment for routing (e.g.
 static file hosts.
 
 To use the real URL path for routing, set the `base-href` property to the
-server mount point (e.g. `/` or `/docs/`). Note that this requires a host that
-serves the application from all paths that should be handled by the doc viewer.
+server mount point (e.g. `/api/docs` or *empty string* for the root path). Note
+that this requires a host that serves the application from all paths that
+should be handled by the doc viewer.
 
 ### Previous versions
 

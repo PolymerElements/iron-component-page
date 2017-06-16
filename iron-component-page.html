@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../app-layout/app-header/app-header.html">
 <link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-doc-viewer/default-theme.html">
@@ -26,6 +27,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="iron-component-page">
   <template>
     <style include="iron-doc-default-theme">
+      :host {
+        --app-drawer-width: 300px;
+      }
+
       [hidden] {
         display: none;
       }
@@ -56,21 +61,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         overflow-x: hidden;
       }
 
-      /**
-       * iron-doc-viewer uses scrollIntoView for fragment links, but this
-       * doesn't take into account our app-header, so by default when our
-       * scroll block is the document, we'll scroll things hidden underneath
-       * the app-header.
-       */
-      #scroller {
-        overflow-y: auto;
-        height: calc(100vh - 64px);
-        display: flex;
-      }
-
       iron-doc-viewer {
-        flex-grow: 1;
-
+        height: 100%;
         --iron-doc-title: {
           display: none;
         }
@@ -109,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </iron-doc-nav>
       </app-drawer>
 
-      <app-header-layout>
+      <app-header-layout has-scrolling-region>
         <app-header slot="header" fixed>
           <app-toolbar>
             <paper-icon-button
@@ -122,16 +114,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </app-toolbar>
         </app-header>
 
-        <div id="scroller">
-          <iron-doc-viewer
-              id="viewer"
-              descriptor="[[_descriptor]]"
-              base-href="[[baseHref]]"
-              demo-src-prefix="[[demoSrcPrefix]]"
-              title="{{_title}}"
-              path="{{_path}}">
-          </iron-doc-viewer>
-        </div>
+        <iron-doc-viewer
+            id="viewer"
+            descriptor="[[_descriptor]]"
+            base-href="[[baseHref]]"
+            demo-src-prefix="[[demoSrcPrefix]]"
+            title="{{_title}}"
+            path="{{_path}}">
+        </iron-doc-viewer>
 
       </app-header-layout>
     </app-drawer-layout>

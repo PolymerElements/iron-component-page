@@ -79,6 +79,17 @@ server mount point (e.g. `/api/docs` or *empty string* for the root path). Note
 that this requires a host that serves the application from all paths that
 should be handled by the doc viewer.
 
+### Styling
+
+`iron-component-page` uses the default theme from
+[`iron-doc-viewer`](https://github.com/PolymerElements/iron-doc-viewer). See
+its documentation for styling. The following custom properties and mixins are
+also available:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--iron-component-page-header-color` | Background color of main header. | `paper-pink-600`
+
 ### Previous versions
 
 The 3.x `iron-component-page` described here has major breaking changes versus

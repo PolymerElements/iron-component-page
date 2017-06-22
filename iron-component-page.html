@@ -38,8 +38,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app-header {
         @apply --paper-font-headline;
         color: white;
-        background-color: #5a5a5a;
-        background-color: var(--iron-component-page-header-color, var(--iron-doc-accent-color1));
+        background-color: var(--iron-component-page-header-color,
+                              var(--iron-doc-accent-color1, #5a5a5a));
       }
 
       [drawer-toggle] {
@@ -119,6 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-doc-viewer
             id="viewer"
             descriptor="[[_descriptor]]"
+            root-namespace="[[rootNamespace]]"
             base-href="[[baseHref]]"
             demo-src-prefix="[[demoSrcPrefix]]"
             title="{{_title}}"
@@ -154,6 +155,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            * slash (e.g. `/api/docs` or *empty string* for the root path).
            */
           baseHref: String,
+
+          /**
+           * Instead of displaying items relative to the top level of
+           * `descriptor`, start from this namespace.
+           */
+          rootNamespace: String,
 
           /**
            * URL prefix for demo iframes.

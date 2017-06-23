@@ -60,7 +60,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           page = fixture('basic');
 
-          flush(done);
+          // Just a flush should be ok, but Safari 9 consistently needs more.
+          setTimeout(done, 500);
         });
 
         afterEach(function() {

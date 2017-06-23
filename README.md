@@ -3,14 +3,6 @@
 
 ## &lt;iron-component-page&gt;
 
-***
-⚠️ The version of `iron-component-page` described below is coming soon, but not
-quite yet tagged for release. You can checkout the `master` branch to
-experiment with it now. See [this
-issue](https://github.com/PolymerElements/iron-component-page/issues/121) for
-status. ⚠️
-***
-
 `iron-component-page` is a full-page documentation browser for custom elements,
 mixins, classes, and more. It consumes the JSON descriptor format produced by
 [Polymer Analyzer](https://github.com/Polymer/polymer-analyzer).
@@ -102,6 +94,8 @@ predecessor to Polymer Analyzer. Major changes in the 3.x version include:
   to generate an `analysis.json` file offline.
 * Replaces the element menu with a full-size navigation panel that summarizes
   all the available documentation produced by Polymer Analyzer.
+* Uses the 3.x version of the
+  [`iron-doc` elements](https://github.com/PolymerElements/iron-doc-viewer).
 
 If you still need the previous version, see the
 [2.x branch](https://github.com/PolymerElements/iron-component-page/tree/2.x).

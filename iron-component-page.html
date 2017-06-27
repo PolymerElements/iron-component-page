@@ -70,6 +70,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
+      iron-doc-viewer:not([demo]) {
+        padding: 5px 20px 20px 20px;
+        max-width: 56em;
+      }
+
       #error-toast {
         background-color: var(--paper-red-600);
       }
@@ -123,7 +128,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             base-href="[[baseHref]]"
             demo-src-prefix="[[demoSrcPrefix]]"
             title="{{_title}}"
-            path="{{_path}}">
+            path="{{_path}}"
+            on-view-changed="_onViewChanged">
         </iron-doc-viewer>
 
       </app-header-layout>
@@ -184,6 +190,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: String,
             observer: '_titleChanged'
           }
+        },
+
+        _onViewChanged() {
+          this.$.viewer.scrollIntoView();
         },
 
         _onNavSelect() {

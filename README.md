@@ -10,7 +10,7 @@ mixins, classes, and more. It consumes the JSON descriptor format produced by
 You may also be interested in the
 [`iron-doc-*`](https://github.com/PolymerElements/iron-doc-viewer) element
 collection which underlies this element and can be used to embed documentation
-in other apps (for example, [webcomponents.org](https://wwww.webcomponents.org)
+in other apps (for example, [webcomponents.org](https://www.webcomponents.org)
 does this).
 
 ### Documenting your element

@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git://github.com/PolymerElements/iron-component-page.git"
   },
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "license": "http://polymer.github.io/LICENSE.txt",
   "dependencies": {

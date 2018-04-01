@@ -1,0 +1,10 @@
+{
+  "name": "@polymer/iron-component-page",
+  "private": true,
+  "description": "Turns a raw element definition into beautiful documentation",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PolymerElements/iron-component-page.git"
+  },
+  "license": "BSD-3-Clause"
+}

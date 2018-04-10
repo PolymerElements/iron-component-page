@@ -138,127 +138,117 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     (function() {
-      Polymer({
-        is: 'iron-component-page',
+    Polymer({
+      is: 'iron-component-page',
 
-        properties: {
-          /**
-           * URL of the Polymer Analyzer descriptor to fetch and display.
-           */
-          descriptorUrl: {
-            type: String,
-            value: 'analysis.json',
-            observer: '_descriptorUrlChanged'
-          },
-
-          /**
-           * By default all routing is performed using the URL fragment
-           * (e.g. `docs.html#/elements/my-element`).
-           *
-           * If your server supports it and you would like to use the real URL
-           * path instead (e.g. `/api/docs/elements/my-element`), set this to
-           * the base path where the page is mounted, omitting the trailing
-           * slash (e.g. `/api/docs` or *empty string* for the root path).
-           */
-          baseHref: String,
-
-          /**
-           * Instead of displaying items relative to the top level of
-           * `descriptor`, start from this namespace.
-           */
-          rootNamespace: String,
-
-          /**
-           * URL prefix for demo iframes.
-           */
-          demoSrcPrefix: String,
-
-          _loading: Boolean,
-
-          _error: Object,
-
-          _descriptor: {
-            type: Object,
-            observer: '_descriptorChanged'
-          },
-
-          _path: String,
-
-          _narrow: Boolean,
-
-          _title: {
-            type: String,
-            observer: '_titleChanged'
-          }
+      properties: {
+        /**
+         * URL of the Polymer Analyzer descriptor to fetch and display.
+         */
+        descriptorUrl: {
+          type: String,
+          value: 'analysis.json',
+          observer: '_descriptorUrlChanged'
         },
 
-        _onViewChanged() {
-          this.$.viewer.scrollIntoView();
-        },
+        /**
+         * By default all routing is performed using the URL fragment
+         * (e.g. `docs.html#/elements/my-element`).
+         *
+         * If your server supports it and you would like to use the real URL
+         * path instead (e.g. `/api/docs/elements/my-element`), set this to
+         * the base path where the page is mounted, omitting the trailing
+         * slash (e.g. `/api/docs` or *empty string* for the root path).
+         */
+        baseHref: String,
 
-        _onNavSelect() {
-          // Note we need to listen for this event, and can't rely just on the
-          // path changing, because the user might click on the nav item they
-          // are already viewing.
-          this.$.viewer.scrollIntoView();
-          if (this._narrow) {
-            this.$.drawer.close();
-          }
-        },
+        /**
+         * Instead of displaying items relative to the top level of
+         * `descriptor`, start from this namespace.
+         */
+        rootNamespace: String,
 
-        _descriptorUrlChanged() {
-          this._error = null;
-        },
+        /**
+         * URL prefix for demo iframes.
+         */
+        demoSrcPrefix: String,
 
-        _descriptorChanged(descriptor) {
-          if (!descriptor || this._changing) {
-            return;
-          }
+        _loading: Boolean,
 
-          this._changing = true;
-          this._descriptor = _flatten(descriptor);
-          this._changing = false;
-        },
+        _error: Object,
 
-        _titleChanged(title) {
-          window.document.title = title;
-        }
-      });
+        _descriptor: {type: Object, observer: '_descriptorChanged'},
 
-      function _flatten(descriptor, flat) {
-        if (!flat) {
-          flat = {
-            namespaces: [],
-            elements: [],
-            metadata: {
-              polymer: {
-                behaviors: []
-              }
-            },
-            mixins: [],
-            classes: [],
-          };
+        _path: String,
+
+        _narrow: Boolean,
+
+        _title: {type: String, observer: '_titleChanged'}
+      },
+
+      _onViewChanged() {
+        this.$.viewer.scrollIntoView();
+      },
+
+      _onNavSelect() {
+        // Note we need to listen for this event, and can't rely just on the
+        // path changing, because the user might click on the nav item they
+        // are already viewing.
+        this.$.viewer.scrollIntoView();
+        if (this._narrow) {
+          this.$.drawer.close();
         }
-        for (var i = 0; i < (descriptor.namespaces || []).length; i++) {
-          _flatten(descriptor.namespaces[i], flat);
-          flat.namespaces.push(descriptor.namespaces[i]);
+      },
+
+      _descriptorUrlChanged() {
+        this._error = null;
+      },
+
+      _descriptorChanged(descriptor) {
+        if (!descriptor || this._changing) {
+          return;
         }
-        for (var i = 0; i < (descriptor.classes || []).length; i++) {
-          flat.classes.push(descriptor.classes[i]);
-        }
-        for (var i = 0; i < (descriptor.elements || []).length; i++) {
-          flat.elements.push(descriptor.elements[i]);
-        }
-        var descriptorBehaviors =
-            ((descriptor.metadata || {}).polymer || {}).behaviors;
-        for (var i = 0; i < (descriptorBehaviors || []).length; i++) {
-          flat.metadata.polymer.behaviors.push(descriptorBehaviors[i]);
-        }
-        for (var i = 0; i < (descriptor.mixins || []).length; i++) {
-          flat.mixins.push(descriptor.mixins[i]);
-        }
-        return flat;
+
+        this._changing = true;
+        this._descriptor = _flatten(descriptor);
+        this._changing = false;
+      },
+
+      _titleChanged(title) {
+        window.document.title = title;
       }
+    });
+
+    function _flatten(descriptor, flat) {
+      if (!flat) {
+        flat = {
+          namespaces: [],
+          elements: [],
+          metadata: {polymer: {behaviors: []}},
+          mixins: [],
+          classes: [],
+        };
+      }
+      for (var i = 0; i < (descriptor.namespaces || []).length; i++) {
+        _flatten(descriptor.namespaces[i], flat);
+        flat.namespaces.push(descriptor.namespaces[i]);
+      }
+      for (var i = 0; i < (descriptor.classes || []).length; i++) {
+        flat.classes.push(descriptor.classes[i]);
+      }
+      for (var i = 0; i < (descriptor.elements || []).length; i++) {
+        flat.elements.push(descriptor.elements[i]);
+      }
+      var descriptorBehaviors =
+          ((descriptor.metadata || {}).polymer || {}).behaviors;
+      for (var i = 0; i < (descriptorBehaviors || []).length; i++) {
+        flat.metadata.polymer.behaviors.push(descriptorBehaviors[i]);
+      }
+      for (var i = 0; i < (descriptor.mixins || []).length; i++) {
+        flat.mixins.push(descriptor.mixins[i]);
+      }
+      return flat;
+    }
     })();
   </script>
 </dom-module>

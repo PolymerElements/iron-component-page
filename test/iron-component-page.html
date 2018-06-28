@@ -26,51 +26,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </test-fixture>
 
     <script type="module">
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/test-fixture/test-fixture.js';
-import '../iron-component-page.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+      import '@polymer/polymer/polymer-legacy.js';
+      import '@polymer/test-fixture/test-fixture.js';
+      import '../iron-component-page.js';
+      import {dom} from '@polymer/polymer/lib/legacy/polymer.dom.js';
 
-var descriptor = {
-  'elements': [{
-    'name': 'my-element',
-    'description': 'I am an element',
-    'demos':
-        [{'url': 'demo/fancy-demo.html', 'description': 'My Fancy Demo'}]
-  }]
-};
+      var descriptor = {
+        'elements': [{
+          'name': 'my-element',
+          'description': 'I am an element',
+          'demos':
+              [{'url': 'demo/fancy-demo.html', 'description': 'My Fancy Demo'}]
+        }]
+      };
 
-describe('<iron-component-page>', function() {
-  var server, page;
+      describe('<iron-component-page>', function() {
+        var server, page;
 
-  beforeEach(function(done) {
-    server = sinon.fakeServer.create();
-    server.respondImmediately = true;
-    server.respondWith('GET', 'analysis.json', [
-      200,
-      {'Content-Type': 'application/json'},
-      JSON.stringify(descriptor)
-    ]);
+        beforeEach(function(done) {
+          server = sinon.fakeServer.create();
+          server.respondImmediately = true;
+          server.respondWith('GET', 'analysis.json', [
+            200,
+            {'Content-Type': 'application/json'},
+            JSON.stringify(descriptor)
+          ]);
 
-    page = fixture('basic');
+          page = fixture('basic');
 
-    // Just a flush should be ok, but Safari 9 consistently needs more.
-    setTimeout(done, 500);
-  });
+          // Just a flush should be ok, but Safari 9 consistently needs more.
+          setTimeout(done, 500);
+        });
 
-  afterEach(function() {
-    server.restore();
-  });
+        afterEach(function() {
+          server.restore();
+        });
 
-  it('fetches default descriptor name and renders from it', function() {
-    var view = page.$$('iron-doc-viewer')
-                   .$$('iron-doc-namespace')
-                   .$$('iron-doc-summary');
-    var text = dom(view.root).textContent;
-    expect(text).contains('my-element');
-  });
-});
-</script>
+        it('fetches default descriptor name and renders from it', function() {
+          var view = page.$$('iron-doc-viewer')
+                         .$$('iron-doc-namespace')
+                         .$$('iron-doc-summary');
+          var text = dom(view.root).textContent;
+          expect(text).contains('my-element');
+        });
+      });
+    </script>
 
   </body>
 </html>

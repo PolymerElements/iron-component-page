@@ -1,6 +1,6 @@
 [![Published on NPM](https://img.shields.io/npm/v/@polymer/iron-component-page.svg)](https://www.npmjs.com/package/@polymer/iron-component-page)
 [![Build status](https://travis-ci.org/PolymerElements/iron-component-page.svg?branch=master)](https://travis-ci.org/PolymerElements/iron-component-page)
-[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://beta.webcomponents.org/element/PolymerElements/iron-component-page)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://webcomponents.org/element/@polymer/iron-component-page)
 
 ## &lt;iron-component-page&gt;
 

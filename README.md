@@ -20,19 +20,15 @@ does this).
 
 ## Usage
 
-### Installation
-```
-npm install --save-dev @polymer/iron-component-page
-```
-
 ### Documenting your element
 
 `iron-component-page` is designed to make it easy to view documentation for
 your custom element project.
 
-1. Install the [Polymer CLI](https://github.com/Polymer/polymer-cli) with `npm
-   install -g polymer-cli` or `yarn global add polymer-cli`. This gives you a
-   command-line interface to Polymer Analyzer (among other things).
+1. Install the [Polymer
+   CLI](https://github.com/Polymer/tools/tree/master/packages/cli) with `npm
+   install -g polymer-cli`. This gives you a command-line interface to Polymer
+   Analyzer (among other things).
 
 2. `cd` to your project directory. This can be a custom element, a full app, or
    even a plain JavaScript library. Polymer Analyzer will discover all of the

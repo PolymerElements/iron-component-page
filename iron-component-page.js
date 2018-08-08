@@ -82,7 +82,7 @@ Polymer({
       }
     </style>
 
-    <iron-ajax auto="" url="[[descriptorUrl]]" handle-as="json" last-response="{{_descriptor}}" loading="{{_loading}}" last-error="{{_error}}">
+    <iron-ajax auto url="[[descriptorUrl]]" handle-as="json" last-response="{{_descriptor}}" loading="{{_loading}}" last-error="{{_error}}">
     </iron-ajax>
 
     <paper-toast id="loading-toast" opened="[[_loading]]" duration="0">
@@ -93,17 +93,17 @@ Polymer({
       Could not load descriptor "[[descriptorUrl]]". <br> [[_error.error]]
     </paper-toast>
 
-    <app-drawer-layout fullbleed="" narrow="{{_narrow}}">
+    <app-drawer-layout fullbleed narrow="{{_narrow}}">
 
-      <app-drawer id="drawer" slot="drawer" swipe-open="">
+      <app-drawer id="drawer" slot="drawer" swipe-open>
         <iron-doc-nav descriptor="[[_descriptor]]" base-href="[[baseHref]]" path="[[_path]]" on-select="_onNavSelect">
         </iron-doc-nav>
       </app-drawer>
 
-      <app-header-layout has-scrolling-region="">
-        <app-header slot="header" fixed="">
+      <app-header-layout has-scrolling-region>
+        <app-header slot="header" fixed>
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle="" hidden\$="[[!_narrow]]">
+            <paper-icon-button icon="menu" drawer-toggle hidden\$="[[!_narrow]]">
             </paper-icon-button>
 
             <div>[[_title]]</div>

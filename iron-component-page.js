@@ -82,15 +82,15 @@ Polymer({
       }
     </style>
 
-    <iron-ajax auto url="[[descriptorUrl]]" handle-as="json" last-response="{{_descriptor}}" loading="{{_loading}}" last-error="{{_error}}">
+    <iron-ajax auto url="[[descriptorUrl]]" handle-as="json" last-response="{{_descriptor}}" loading="{{_loading}}" last-error="{{_descriptorError}}">
     </iron-ajax>
 
     <paper-toast id="loading-toast" opened="[[_loading]]" duration="0">
       Loading descriptor ...
     </paper-toast>
 
-    <paper-toast id="error-toast" opened="[[_error]]" duration="0">
-      Could not load descriptor "[[descriptorUrl]]". <br> [[_error.error]]
+    <paper-toast id="error-toast" opened="[[_descriptorError]]" duration="0">
+      Could not load descriptor "[[descriptorUrl]]". <br> [[_descriptorError.error]]
     </paper-toast>
 
     <app-drawer-layout fullbleed narrow="{{_narrow}}">
@@ -153,7 +153,7 @@ Polymer({
 
     _loading: Boolean,
 
-    _error: Object,
+    _descriptorError: Object,
 
     _descriptor: {type: Object, observer: '_descriptorChanged'},
 
@@ -179,7 +179,7 @@ Polymer({
   },
 
   _descriptorUrlChanged() {
-    this._error = null;
+    this._descriptorError = null;
   },
 
   _descriptorChanged(descriptor) {

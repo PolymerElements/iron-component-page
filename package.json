@@ -19,20 +19,20 @@
   },
   "scripts": {
     "format": "webmat",
-    "generate-types": "gen-typescript-declarations --deleteExisting --outDir .",
+    "generate-types": "gen-typescript-declarations --deleteExisting --outDir . --verify",
     "prepack": "npm run generate-types"
   },
   "version": "4.0.0-pre.0",
   "main": "iron-component-page.js",
   "author": "The Polymer Authors",
   "dependencies": {
-    "@polymer/app-layout": "^3.0.0-pre.20",
-    "@polymer/iron-ajax": "^3.0.0-pre.20",
-    "@polymer/iron-doc-viewer": "^3.0.0-pre.20",
-    "@polymer/iron-icons": "^3.0.0-pre.20",
-    "@polymer/paper-icon-button": "^3.0.0-pre.20",
-    "@polymer/paper-styles": "^3.0.0-pre.20",
-    "@polymer/paper-toast": "^3.0.0-pre.20",
+    "@polymer/app-layout": "^3.0.0-pre.22",
+    "@polymer/iron-ajax": "^3.0.0-pre.22",
+    "@polymer/iron-doc-viewer": "^4.0.0-pre.0",
+    "@polymer/iron-icons": "^3.0.0-pre.22",
+    "@polymer/paper-icon-button": "^3.0.0-pre.22",
+    "@polymer/paper-styles": "^3.0.0-pre.22",
+    "@polymer/paper-toast": "^3.0.0-pre.22",
     "@polymer/polymer": "^3.0.0"
   }
 }

@@ -22,7 +22,7 @@
     "generate-types": "gen-typescript-declarations --deleteExisting --outDir . --verify",
     "prepack": "npm run generate-types"
   },
-  "version": "4.0.0-pre.1",
+  "version": "4.0.0-pre.2",
   "main": "iron-component-page.js",
   "author": "The Polymer Authors",
   "dependencies": {

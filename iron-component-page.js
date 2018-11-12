@@ -103,7 +103,7 @@ Polymer({
       <app-header-layout has-scrolling-region>
         <app-header slot="header" fixed>
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle hidden\$="[[!_narrow]]">
+            <paper-icon-button icon="menu" drawer-toggle hidden$="[[!_narrow]]">
             </paper-icon-button>
 
             <div>[[_title]]</div>
